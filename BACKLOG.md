@@ -86,7 +86,7 @@ Backend
 - ✅ 5.1 [BE] Conversation repository (create, list by `user_id`)
 - ✅ 5.2 [BE] Message repository (insert, fetch history) — every query filtered by `user_id`
 - ✅ 5.3 [BE] Chat service: send → verify ownership → persist user msg → color → LLM reply → persist
-- ⬜ 5.4 [BE] Endpoints: list/create conversations, get history, send message (auth-guarded)
+- ✅ 5.4 [BE] Endpoints: list/create conversations, get history, send message (auth-guarded)
 - ⬜ 5.5 [BE] Per-user isolation enforcement: ownership checks, identity from session not client (stretch)
 
 UI

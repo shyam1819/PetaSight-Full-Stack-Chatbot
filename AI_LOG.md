@@ -193,3 +193,14 @@ this file stays scoped to tooling, key prompts, and AI corrections to avoid dupl
 - **5.3 chat service orchestration (done).** `send_message` verifies ownership → compute-first →
   persist user + coloured assistant message; returns None for unowned conversations. DI over repo
   interfaces (no psycopg/langchain); 5 fake-based unit tests.
+- **5.4 endpoints (done).** `/api/conversations` + `/api/messages`, auth-guarded, `user_id` from the
+  verified cookie only; ownership → 404. Verified live incl. isolation (B→404, no-cookie→401) and
+  correct colours.
+- **Debugging: deployed app uses a different Neon branch.** Message endpoints 500'd while
+  conversations worked. Chased it: `color_rule` existed on the DB `vercel env pull` returned, but the
+  deployed app's writes weren't visible there (`conversations count 0` while IDs kept advancing).
+  Root cause: Neon's Vercel integration binds Preview deployments to a **separate Neon branch**
+  (`ep-orange-truth…` vs the pulled `ep-rough-pine…`) without `color_rule`. Fixed with a temporary
+  in-app `/api/db_migrate` endpoint that migrates the app's own branch; confirmed the branch is
+  stable across deploys, then removed the endpoint. Lesson: migrate the branch the *app* uses, not
+  the one the CLI hands you.

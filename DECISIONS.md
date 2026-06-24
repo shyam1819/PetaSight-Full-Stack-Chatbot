@@ -285,6 +285,12 @@ decisions get appended under their epic as we complete them.
   the `LLMClient` + repo interfaces (DI; no psycopg/langchain). Ownership is enforced here; the
   endpoint supplies `user_id` from the verified cookie. Unit-tested with fakes incl. the
   unowned-conversation rejection (5 tests).
+- **5.4 Endpoints** — `GET/POST /api/conversations` (list/create), `GET/POST /api/messages`
+  (`?conversation_id=` history / send). Every handler derives `user_id` from `require_user()` (the
+  verified cookie) — **never** from the client; ownership enforced (404 for non-owned). Lazy LLM
+  import so history reads skip the LangChain cold-start. Verified **live end to end** incl. isolation
+  (B → 404 on A's data, no-cookie → 401) and correct colours ("Austin 21.5C" → temperature `#ce72a2`,
+  "the bill was 42.37" → decimal `#9e9d99`).
 
 ## Phase 5 — Deployment
 
@@ -295,6 +301,14 @@ decisions get appended under their epic as we complete them.
   `main` → **Production**. Work happens on `dev`; `main` stays releasable.
 - Deploy uses the Vercel CLI with `VERCEL_TOKEN` / `VERCEL_ORG_ID` / `VERCEL_PROJECT_ID` stored as
   GitHub Actions secrets (set once by the repo owner).
+- **Neon Preview branch + migrations.** Neon's Vercel integration gives the deployed (dev→Preview)
+  app a **separate Neon branch** from what `vercel env pull` returns (the dev branch) — different
+  endpoint host, same `neondb`. So schema migrations applied via the pulled URL **don't reach the
+  running app**. Fix: migrate the app's *own* branch via a temporary in-app `/api/db_migrate`
+  endpoint (runs with the deployed connection). The Preview branch is **stable across deploys**, so a
+  one-time migration persists (verified: column survived a redeploy). Future schema changes need the
+  same one-shot step. (Local integration tests still run against the dev branch — fine, the repo code
+  is DB-agnostic.)
 - **Stable dev URL via alias** — CLI deploys (vs Vercel's native Git integration) produce a new
   immutable URL per push and **no** `-git-dev-` branch alias, so the host-only session cookie
   appeared "lost" when testing across deploys. Fix: the workflow re-points a stable alias
