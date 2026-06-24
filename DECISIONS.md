@@ -160,6 +160,11 @@ decisions get appended under their epic as we complete them.
   trust-on-first-use accepts any non-empty password (empty is rejected). Deliberate simplification
   for the assignment — a production app would enforce a policy (length/complexity, breach check)
   and rate-limit attempts. Hashing (PBKDF2) still protects stored credentials regardless.
+- **2.8 Session gating** — `App` checks `/api/me` once on load (phases: loading / anon / authed),
+  so a signed-in user persists across refresh and an expired/invalid session (401) falls back to
+  login. Signed-in shell shows the email + a **Log out** control (`POST /api/logout`, clears client
+  state). Loading announced via `role="status" aria-live`. Completes the EP-2 frontend; the chat
+  screen itself is deferred to EP-3/EP-5/EP-6.
 
 ## Phase 5 — Deployment
 

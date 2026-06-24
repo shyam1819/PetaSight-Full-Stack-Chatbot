@@ -1,22 +1,64 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import LoginForm from './components/LoginForm'
-import type { AuthUser } from './api/auth'
+import { getMe, logout, type AuthUser } from './api/auth'
 
-// Story 2.7: render the login form. Session-aware gating (check /api/me on load,
-// chat screen, logout) arrives in story 2.8.
+type State =
+  | { phase: 'loading' }
+  | { phase: 'anon' }
+  | { phase: 'authed'; user: AuthUser }
+
+// Story 2.8: gate on the session. Check /api/me once on load so a signed-in user
+// stays in across refreshes; an expired/invalid session (401) falls back to login.
+// The chat screen itself lands in EP-3/EP-5/EP-6.
 export default function App() {
-  const [user, setUser] = useState<AuthUser | null>(null)
+  const [state, setState] = useState<State>({ phase: 'loading' })
 
-  if (!user) return <LoginForm onSuccess={setUser} />
+  useEffect(() => {
+    let active = true
+    getMe().then((user) => {
+      if (active) setState(user ? { phase: 'authed', user } : { phase: 'anon' })
+    })
+    return () => {
+      active = false
+    }
+  }, [])
+
+  async function handleLogout() {
+    await logout()
+    setState({ phase: 'anon' })
+  }
+
+  if (state.phase === 'loading') {
+    return (
+      <main className="auth">
+        <p className="auth__loading" role="status" aria-live="polite">
+          Loading…
+        </p>
+      </main>
+    )
+  }
+
+  if (state.phase === 'anon') {
+    return <LoginForm onSuccess={(user) => setState({ phase: 'authed', user })} />
+  }
 
   return (
-    <main className="auth">
-      <div className="auth__card">
-        <h1 className="auth__title">Signed in</h1>
-        <p className="auth__hint">
-          You are signed in as <strong>{user.email}</strong>. The chat screen comes next (2.8 / EP-6).
+    <div className="app">
+      <header className="app__header">
+        <span className="app__brand">PetaSight Chat</span>
+        <div className="app__account">
+          <span className="app__user">{state.user.email}</span>
+          <button type="button" className="app__logout" onClick={handleLogout}>
+            Log out
+          </button>
+        </div>
+      </header>
+      <main className="app__main">
+        <p className="app__placeholder">
+          You're signed in. The chat screen arrives with the bubble engine and conversations
+          (EP-3 / EP-5 / EP-6).
         </p>
-      </div>
-    </main>
+      </main>
+    </div>
   )
 }

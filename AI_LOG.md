@@ -116,3 +116,6 @@ this file stays scoped to tooling, key prompts, and AI corrections to avoid dupl
 - **2.7 login form (done).** Accessible `LoginForm` + typed auth client; loading/error states,
   `aria-live` status, autofocus, visible focus rings, `aria-invalid`. Build passes; wired to the
   live `/api/login` (verified in 2.5). Session gating + chat come in 2.8.
+- **2.8 session gating (done).** `getMe`/`logout` client; `App` gates on `/api/me`
+  (loading/anon/authed), persists across refresh, 401→login, logout clears state + shows shell with
+  email + Log out. Build passes. **Completes EP-2.**

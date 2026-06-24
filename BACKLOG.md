@@ -10,7 +10,7 @@ Status legend: ✅ done · 🔄 in progress · ⬜ todo
 | ID | Epic | Maps to | Status |
 |----|------|---------|--------|
 | EP-1 | Deployment & Infrastructure | Enabling (live URL, CI/CD, DB) | ✅ done |
-| EP-2 | Authentication & Access Control | Feature 4 (@petasight.com, stateless identity) | 🔄 in progress |
+| EP-2 | Authentication & Access Control | Feature 4 (@petasight.com, stateless identity) | ✅ done |
 | EP-3 | Bubble Color Engine | Feature 1 (3 rules, collision, readability) | ⬜ todo |
 | EP-4 | LLM Backend Integration | Feature 2 (real LLM, panic classification) | ⬜ todo |
 | EP-5 | Conversations, History & User Isolation | Messaging + stretch (per-user data) | ⬜ todo |
@@ -57,7 +57,7 @@ Backend
 
 UI
 - ✅ 2.7 [UI] Accessible login form wired to `/api/login` (loading + error states)
-- ⬜ 2.8 [UI] Session-aware gating (authed→chat, logout control, 401 handling)
+- ✅ 2.8 [UI] Session-aware gating (authed→chat, logout control, 401 handling)
 
 ### EP-3 — Bubble Color Engine ⬜
 Backend
