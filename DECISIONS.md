@@ -46,6 +46,8 @@ solution approach is recorded later, in the phase where we decide it.
   already-created user. Implication (for the auth to hold): an existing email with a **wrong**
   password must be **rejected**, never silently re-created — otherwise anyone could overwrite or
   take over another `@petasight.com` account. (Feeds [THREATS.md](THREATS.md).)
+- No **forgot-password** / password-reset flow — kept out to stay simple and within the scope of
+  the assignment.
 
 ## Phase 2 — Architecture (frontend / backend)
 
