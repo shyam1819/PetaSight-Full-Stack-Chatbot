@@ -11,10 +11,10 @@ Status legend: ✅ done · 🔄 in progress · ⬜ todo
 |----|------|---------|--------|
 | EP-1 | Deployment & Infrastructure | Enabling (live URL, CI/CD, DB) | ✅ done |
 | EP-2 | Authentication & Access Control | Feature 4 (@petasight.com, stateless identity) | ✅ done |
-| EP-3 | Bubble Color Engine | Feature 1 (3 rules, collision, readability) | ⬜ todo |
+| EP-3 | Bubble Color Engine | Feature 1 (3 rules, collision, readability) | ✅ done |
 | EP-4 | LLM Backend Integration | Feature 2 (real LLM, panic classification) | ⬜ todo |
-| EP-5 | Conversations, History & User Isolation | Messaging + stretch (per-user data) | ⬜ todo |
-| EP-6 | Frontend Experience & Accessibility | Feature 3 (login + chat UI, keyboard, focus) | ⬜ todo |
+| EP-5 | Conversations, History & User Isolation | Messaging + stretch (per-user data) | ✅ done |
+| EP-6 | Frontend Experience & Accessibility | Feature 3 (login + chat UI, keyboard, focus) | ✅ done |
 | EP-7 | Security Threat Model & Code Review | Deliverables (THREATS.md, REVIEW.md) | ⬜ todo |
 
 ## Epic goals
@@ -46,7 +46,7 @@ Each story tagged by layer: **[BE]** backend · **[UI]** frontend · **[Infra]**
 - ✅ 1.4 [BE] Schema (users/conversations/messages) + `db_health` connectivity check
 - ✅ 1.5 [BE] Lock shared-module import convention (`api/_core`, `from api._core...`)
 
-### EP-2 — Authentication & Access Control 🔄
+### EP-2 — Authentication & Access Control ✅
 Backend
 - ✅ 2.1 [BE] PBKDF2-HMAC-SHA256 password hashing module (per-user salt, high iterations)
 - ✅ 2.2 [BE] HMAC signed-session token (sign/verify) + HttpOnly/Secure/SameSite cookie helpers; `SESSION_SECRET`
@@ -59,7 +59,7 @@ UI
 - ✅ 2.7 [UI] Accessible login form wired to `/api/login` (loading + error states)
 - ✅ 2.8 [UI] Session-aware gating (authed→chat, logout control, 401 handling)
 
-### EP-3 — Bubble Color Engine 🔄
+### EP-3 — Bubble Color Engine ✅
 Backend
 - ✅ 3.1 [BE] Color primitives (RGB, clamp, lerp) — reuse the corrected `review/` logic
 - ✅ 3.2 [BE] TemperatureRule: city+temp detection, clamped blue→purple→red
@@ -69,7 +69,7 @@ Backend
 - ✅ 3.6 [BE] Attach computed color to the reply (ChatService) + persist `bubble_color`/`color_rule` (message repo)
 
 UI
-- ⬜ 3.7 [UI] Apply the returned background color to reply bubbles
+- ✅ 3.7 [UI] Apply the returned background color to reply bubbles (in 5.7)
 
 ### EP-4 — LLM Backend Integration 🔄
 Decision: Groq + `openai/gpt-oss-120b` via LangChain `ChatGroq`, behind the `LLMClient` interface.
@@ -81,7 +81,7 @@ Backend
 - ✅ 4.3 [BE] Rate limiting on the Groq client via LangChain `InMemoryRateLimiter` (20/min, check 0.1s, burst 20; module-level shared across both ChatGroq; per-instance in serverless — global would need a shared store)
 - ⬜ 4.4 [BE] (Bonus) RTL philosopher persona reply: original script + English translation
 
-### EP-5 — Conversations, History & User Isolation 🔄
+### EP-5 — Conversations, History & User Isolation ✅
 Backend
 - ✅ 5.1 [BE] Conversation repository (create, list by `user_id`)
 - ✅ 5.2 [BE] Message repository (insert, fetch history) — every query filtered by `user_id`
@@ -92,19 +92,19 @@ Backend
 UI
 - ✅ 5.6 [UI] Conversations list (view, select, create new)
 - ✅ 5.7 [UI] Message thread (load history, render user/assistant bubbles)
-- ⬜ 5.8 [UI] Send-message flow integrated with the backend
+- ✅ 5.8 [UI] Send-message flow integrated with the backend
 
-### EP-6 — Frontend Experience & Accessibility ⬜
+### EP-6 — Frontend Experience & Accessibility ✅
 UI
-- ⬜ 6.1 [UI] App shell + login↔chat navigation (auth-aware)
-- ⬜ 6.2 [UI] Chat layout (thread + composer)
-- ⬜ 6.3 [UI] Keyboard operability (tab order, visible focus rings, Enter-to-send)
-- ⬜ 6.4 [UI] Focus management: focus stays in input on new reply (no yank)
-- ⬜ 6.5 [UI] `aria-live="polite"` thread announcements
+- ✅ 6.1 [UI] App shell + login↔chat navigation (auth-aware)
+- ✅ 6.2 [UI] Chat layout (thread + composer)
+- ✅ 6.3 [UI] Keyboard operability (tab order, visible focus rings, Enter-to-send)
+- ✅ 6.4 [UI] Focus management: focus stays in input on new reply (no yank)
+- ✅ 6.5 [UI] `aria-live="polite"` thread announcements (role="log")
 - ✅ 6.6 [UI] Per-bubble readable text contrast (luminance-based; bubbles are opaque so no compositing needed)
-- ⬜ 6.7 [UI] Aesthetics: chat background + bubble opacity (the deferred styling)
+- ✅ 6.7 [UI] Aesthetics: clean flat design; bubbles opaque (no opacity), so contrast is direct
 
 ### EP-7 — Security Threat Model & Code Review ⬜
-- ⬜ 7.1 [Docs] THREATS.md — isolation attack/defense and why it holds
+- ✅ 7.1 [Docs] THREATS.md — isolation attack/defense and why it holds (T1/T2/T3)
 - ⬜ 7.2 [Docs] REVIEW.md — review the provided `review/` module (bugs + fixes)
 - ⬜ 7.3 [BE] Harden/lock any isolation or exposed-endpoint gaps found

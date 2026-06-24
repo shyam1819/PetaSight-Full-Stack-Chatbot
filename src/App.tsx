@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import LoginForm from './components/LoginForm'
 import ConversationList from './components/ConversationList'
-import MessageThread from './components/MessageThread'
+import ChatPanel from './components/ChatPanel'
 import { getMe, logout, type AuthUser } from './api/auth'
 
 type State =
@@ -65,7 +65,7 @@ export default function App() {
           {selectedId === null ? (
             <p className="app__placeholder">Select a conversation, or create a new one.</p>
           ) : (
-            <MessageThread key={selectedId} conversationId={selectedId} />
+            <ChatPanel key={selectedId} conversationId={selectedId} />
           )}
         </main>
       </div>

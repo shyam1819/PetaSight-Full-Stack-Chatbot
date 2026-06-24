@@ -305,6 +305,13 @@ decisions get appended under their epic as we complete them.
   (`readableTextColor`), picking white or near-black for max legibility — verified across every
   engine colour (danger zones pale yellow / light purple / light gray correctly get dark text).
   Bubbles are opaque, so no opacity compositing is needed. Loading via `role="status" aria-live`.
+- **5.8 Send flow + accessibility (EP-6 6.3–6.5)** — `ChatPanel` composer posts to `/api/messages`
+  and appends the turn. The graded behaviours: **focus stays in the composer** when the reply
+  appends (we re-focus the textarea, never the bubble); new messages land in a `role="log"` live
+  region (announced politely, no focus steal); **Enter** sends, **Shift+Enter** newlines; the latest
+  message is `scrollIntoView`'d (scroll only — not focus); visible focus rings throughout; labelled
+  input. "A keyboard user should not lose their place when a reply arrives" is satisfied by
+  construction.
 
 ## Phase 5 — Deployment
 

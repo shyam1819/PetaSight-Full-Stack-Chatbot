@@ -214,3 +214,7 @@ this file stays scoped to tooling, key prompts, and AI corrections to avoid dupl
   bubbles; assistant gets the engine `bubble_color` with text colour derived via WCAG luminance
   (`readableTextColor`). Verified the contrast picks across all engine colours (danger zones → dark
   text). Bubbles opaque → no compositing needed.
+- **5.8 send flow + accessibility (done; EP-6 6.1–6.5,6.7).** `ChatPanel` composer → `/api/messages`,
+  appends the turn. Focus stays in the composer on reply (re-focus, never the bubble); `role="log"`
+  announces new messages without focus steal; Enter sends / Shift+Enter newlines; scroll-into-view
+  (not focus). **EP-3, EP-5, EP-6 all complete.**

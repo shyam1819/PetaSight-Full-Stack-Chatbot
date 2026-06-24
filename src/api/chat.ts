@@ -22,6 +22,24 @@ export async function listConversations(): Promise<Conversation[]> {
   }
 }
 
+export type SentTurn = { user_message: ChatMessage; assistant_message: ChatMessage }
+
+export async function sendMessage(conversationId: number, text: string): Promise<SentTurn | null> {
+  try {
+    const res = await fetch('/api/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'same-origin',
+      body: JSON.stringify({ conversation_id: conversationId, text }),
+    })
+    if (!res.ok) return null
+    const data = await res.json()
+    return { user_message: data.user_message, assistant_message: data.assistant_message }
+  } catch {
+    return null
+  }
+}
+
 export async function getHistory(conversationId: number): Promise<ChatMessage[]> {
   try {
     const res = await fetch(`/api/messages?conversation_id=${conversationId}`, {
