@@ -15,8 +15,21 @@ solution approach is recorded later, in the phase where we decide it.
 - Rule 2 — standalone decimal: grayscale/sepia from the first two decimal digits, `.00`
   lightest → `.99` darkest.
 - Rule 3 — ask the LLM how urgent/panicked it sounds: violet → magenta → pale yellow.
-- A message can match more than one rule. The ASK **requires a documented decision** on which
-  signal wins (not order alone). _Decision pending — to be made when the matcher is built._
+- **Collision decision (the graded one): strict first-match-wins**, in the brief's order
+  (temperature → decimal → panic). We honour the explicit spec ("Check these in order, first match
+  wins") rather than overriding by signal. Rationale: the order runs most-objective →
+  most-subjective — a present city+temperature or a decimal is a concrete fact in the text, whereas
+  panic is a fuzzy LLM judgment; so when a concrete signal is present it gives a more predictable,
+  explainable, deterministic colour than letting panic override.
+- **Temperature requires a unit or explicit description.** A number is a temperature only when given
+  with a unit (°C, C, "degrees", "Celsius") or described as a temperature; a **bare** number next to
+  a city (plain "Austin 21.5") is NOT a temperature → it falls through to the decimal rule. This is
+  stricter than — and **deliberately diverges from** — the brief's collision example (which reads
+  "Austin 21.5" as a temperature): we judge a bare number too ambiguous to be "a temperature in
+  Celsius". Enforced in the classify prompt; verified live ("Austin 21.5"→decimal, "Austin 21.5C" /
+  "21.5 degrees in Austin"→temperature, "the score is 21.5"→decimal). **Consequence:** the brief's
+  example "Austin 21.5 we need to leave right now" colours as a **decimal** (gray), not temperature
+  or panic.
 - Assumption: "bubble" = the **AI reply message div** (WhatsApp-style); the user's message sets
   the color of the assistant's reply bubble.
 - Assumption: bubble color is decided **per message in isolation** — conversation history does
@@ -191,6 +204,11 @@ decisions get appended under their epic as we complete them.
   interpolation): `calm` → pale yellow `#F4EDA6`, `neutral` → magenta `#D6219B`, `panicked` →
   violet `#7A1FA2`. `panic_rule` is the **fallback** (always matches); defensive default neutral. 2
   unit tests.
+- **3.5 Resolver** — `resolve_bubble_color(message, analysis)` chains the rules strict
+  first-match-wins (temperature → decimal → panic) and returns `BubbleColor(color, rule)` — `rule`
+  is stored as provenance. Collision + temperature-unit interpretation per Feature 1; the classify
+  prompt was tightened so `temperature_c` is set only with a unit/description. 4 resolver tests (14
+  total); verified live end to end.
 
 ### EP-4 — LLM Backend Integration
 - **Provider/framework** — Groq + `openai/gpt-oss-120b` via **LangChain `ChatGroq`** behind the

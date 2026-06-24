@@ -171,3 +171,9 @@ this file stays scoped to tooling, key prompts, and AI corrections to avoid dupl
   `#ECEAE3`→`#1C1C1C`. 4 unit tests incl. the code-wins case.
 - **3.4 PanicRule (done).** 3-level enum → named colours: calm `#F4EDA6`, neutral `#D6219B`,
   panicked `#7A1FA2`; fallback rule (always matches). 2 unit tests. All three rules now built.
+- **3.5 resolver + temperature-needs-a-unit (done).** `resolve_bubble_color` strict first-match-wins
+  (temp→decimal→panic) → `BubbleColor(color, rule)` provenance. **Collision = strict
+  first-match-wins** (documented; diverges from the brief's example). User refinement: a bare number
+  next to a city is NOT a temperature — tightened the classify prompt. Verified live: "Austin
+  21.5"→decimal, "Austin 21.5C" / "21.5 degrees in Austin"→temperature, "the score is 21.5"→decimal.
+  14 unit tests.

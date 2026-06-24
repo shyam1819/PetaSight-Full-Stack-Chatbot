@@ -65,7 +65,7 @@ Backend
 - ✅ 3.2 [BE] TemperatureRule: city+temp detection, clamped blue→purple→red
 - ✅ 3.3 [BE] DecimalRule: standalone decimal, first two fractional digits → grayscale/sepia
 - ✅ 3.4 [BE] PanicRule: calm/neutral/panicked → pale yellow/magenta/violet
-- ⬜ 3.5 [BE] Resolver (first-match-wins chain) + finalize collision decision (DECISIONS D2)
+- ✅ 3.5 [BE] Resolver (first-match-wins chain) + collision decision (strict first-match-wins; temp needs a unit)
 - ⬜ 3.6 [BE] Attach computed color to the reply, persist `bubble_color`
 
 UI
