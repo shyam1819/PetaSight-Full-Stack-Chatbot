@@ -181,6 +181,12 @@ decisions get appended under their epic as we complete them.
   interpolation are free); anchors reused from the `review/` module. `temperature_rule` applies
   only when **both** `city` and `temperature_c` are present (LLM-detected). Uniform rule signature
   `(message, analysis) -> Color | None` for the resolver chain. 4 unit tests.
+- **3.3 DecimalRule** — **code-authoritative**: regex `(?<![\w.])\d+\.\d+(?![\w.])` extracts the
+  first standalone decimal from the message (excludes version strings / IPs; integers don't match),
+  ignoring the LLM's `decimal_value`. First two fractional digits (right-padded, so `0.5`→`50`,
+  `3.0`→`00`) map to a grayscale ramp: `.00` `#ECEAE3` lightest → `.99` `#1C1C1C` darkest. 4 unit
+  tests including the code-authoritative case (text without a decimal → None even if the LLM
+  reported one).
 
 ### EP-4 — LLM Backend Integration
 - **Provider/framework** — Groq + `openai/gpt-oss-120b` via **LangChain `ChatGroq`** behind the

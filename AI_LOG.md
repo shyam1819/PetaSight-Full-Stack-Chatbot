@@ -166,3 +166,6 @@ this file stays scoped to tooling, key prompts, and AI corrections to avoid dupl
 - **3.2 TemperatureRule (done).** `temperature_color(°C)` via `ramp` over deep-blue/light-purple/
   bright-red stops (review/ anchors); `temperature_rule` needs both city + temp. Uniform
   `(message, analysis) -> Color | None` signature for the chain. 4 unit tests.
+- **3.3 DecimalRule (done).** Code-authoritative regex extracts the standalone decimal (ignores the
+  LLM's value, excludes versions/IPs); first two fractional digits (right-padded) → grayscale ramp
+  `#ECEAE3`→`#1C1C1C`. 4 unit tests incl. the code-wins case.
