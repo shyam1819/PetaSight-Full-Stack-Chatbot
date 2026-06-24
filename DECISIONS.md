@@ -37,6 +37,15 @@ solution approach is recorded later, in the phase where we decide it.
 
 ### Feature 4 — Sign-in restricted to @petasight.com
 - Only `@petasight.com` emails get in, **enforced at the backend endpoint**, not just the login page.
+- Assumption 1 — no external identity provider to verify a real person: accept **any** credentials
+  whose email matches the `@petasight.com` domain (domain check is the only gate on who's valid).
+- Assumption 2 — no onboarding / no pre-provisioned passwords / no separate "create user" flow.
+  Account is created **on first sign-in** (trust-on-first-use): the email + password entered the
+  first time becomes the stored credential for that email.
+- Re-access: signing in again with the **same** email + password authenticates the
+  already-created user. Implication (for the auth to hold): an existing email with a **wrong**
+  password must be **rejected**, never silently re-created — otherwise anyone could overwrite or
+  take over another `@petasight.com` account. (Feeds [THREATS.md](THREATS.md).)
 
 ## Phase 2 — Architecture (frontend / backend)
 
