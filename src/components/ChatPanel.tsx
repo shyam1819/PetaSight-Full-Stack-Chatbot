@@ -1,20 +1,35 @@
 import { useEffect, useRef, useState, type FormEvent, type KeyboardEvent } from 'react'
-import { getHistory, sendMessage, type ChatMessage } from '../api/chat'
-import { readableTextColor } from '../lib/contrast'
+import { createConversation, getHistory, sendMessage, type ChatMessage } from '../api/chat'
+import { bubbleStyle } from '../lib/contrast'
 
-// The chat panel: history + composer. Accessibility is the point here —
-// focus stays in the composer when a reply appends, and new messages are announced
-// via a role="log" live region (so a screen-reader user hears the reply without being moved).
-export default function ChatPanel({ conversationId }: { conversationId: number }) {
+type Props = {
+  conversationId: number | null // null = a fresh "new chat" draft
+  onConversationCreated: (id: number) => void
+}
+
+export default function ChatPanel({ conversationId, onConversationCreated }: Props) {
   const [messages, setMessages] = useState<ChatMessage[]>([])
-  const [loading, setLoading] = useState(true)
-  const [text, setText] = useState('')
-  const [sending, setSending] = useState(false)
+  const [loading, setLoading] = useState(false)
+  const [generating, setGenerating] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [text, setText] = useState('')
   const inputRef = useRef<HTMLTextAreaElement>(null)
   const endRef = useRef<HTMLDivElement>(null)
+  const selfCreatedRef = useRef<number | null>(null)
+  const tempIdRef = useRef(-1)
 
+  // Load history when the selected conversation changes — but skip the one we just created
+  // locally (a one-shot), so the optimistic messages aren't wiped.
   useEffect(() => {
+    if (conversationId === null) {
+      setMessages([])
+      selfCreatedRef.current = null
+      return
+    }
+    if (conversationId === selfCreatedRef.current) {
+      selfCreatedRef.current = null
+      return
+    }
     let active = true
     setLoading(true)
     getHistory(conversationId).then((items) => {
@@ -28,29 +43,61 @@ export default function ChatPanel({ conversationId }: { conversationId: number }
     }
   }, [conversationId])
 
-  // Focus the composer once the conversation is ready — never the messages.
+  // Keep the composer focused (new chat or after load) — never the messages.
   useEffect(() => {
     if (!loading) inputRef.current?.focus()
   }, [loading, conversationId])
 
-  // Scroll the latest message into view (scrolling only — this does NOT move focus).
+  // Scroll the latest into view (scroll only — does NOT move focus).
   useEffect(() => {
     endRef.current?.scrollIntoView({ block: 'end' })
-  }, [messages])
+  }, [messages, generating])
 
   async function handleSend(event?: FormEvent) {
     event?.preventDefault()
     const trimmed = text.trim()
-    if (!trimmed || sending) return
-    setSending(true)
-    setError(null)
+    if (!trimmed || generating) return
     setText('')
-    const turn = await sendMessage(conversationId, trimmed)
-    setSending(false)
+    setError(null)
+
+    // Optimistic: show the user's message immediately, then a typing indicator below it.
+    const tempUser: ChatMessage = {
+      id: tempIdRef.current--,
+      role: 'user',
+      content: trimmed,
+      bubble_color: null,
+      color_rule: null,
+      created_at: new Date().toISOString(),
+    }
+    setMessages((prev) => [...prev, tempUser])
+    setGenerating(true)
+
+    let cid = conversationId
+    if (cid === null) {
+      const convo = await createConversation(trimmed.slice(0, 40))
+      if (!convo) {
+        setGenerating(false)
+        setError('Could not start the conversation. Please try again.')
+        setMessages((prev) => prev.filter((m) => m.id !== tempUser.id))
+        inputRef.current?.focus()
+        return
+      }
+      cid = convo.id
+      selfCreatedRef.current = cid // tell the load effect to skip the upcoming prop change
+      onConversationCreated(cid)
+    }
+
+    const turn = await sendMessage(cid, trimmed)
+    setGenerating(false)
     if (turn) {
-      setMessages((prev) => [...prev, turn.user_message, turn.assistant_message])
+      setMessages((prev) =>
+        prev
+          .map((m) => (m.id === tempUser.id ? turn.user_message : m))
+          .concat(turn.assistant_message),
+      )
     } else {
       setError('Could not send your message. Please try again.')
+      setMessages((prev) => prev.filter((m) => m.id !== tempUser.id))
     }
     // Keep focus in the composer; the appended reply must never steal it.
     inputRef.current?.focus()
@@ -64,27 +111,32 @@ export default function ChatPanel({ conversationId }: { conversationId: number }
   }
 
   return (
-    <div className="chat">
+    <section className="chat" aria-label="Conversation">
       <div className="chat__messages">
         {loading ? (
           <p className="thread__status" role="status" aria-live="polite">
             Loading messages…
           </p>
-        ) : messages.length === 0 ? (
-          <p className="thread__status">No messages yet. Send one to get started.</p>
+        ) : messages.length === 0 && !generating ? (
+          <p className="thread__status">Start a new chat — type your first message below.</p>
         ) : (
           <ul className="thread" aria-label="Messages" role="log">
             {messages.map((m) => {
               const style =
-                m.role === 'assistant' && m.bubble_color
-                  ? { background: m.bubble_color, color: readableTextColor(m.bubble_color) }
-                  : undefined
+                m.role === 'assistant' && m.bubble_color ? bubbleStyle(m.bubble_color) : undefined
               return (
                 <li key={m.id} className={`bubble bubble--${m.role}`} style={style}>
                   {m.content}
                 </li>
               )
             })}
+            {generating && (
+              <li className="bubble bubble--assistant bubble--loading" aria-label="Assistant is typing">
+                <span className="dot" />
+                <span className="dot" />
+                <span className="dot" />
+              </li>
+            )}
           </ul>
         )}
         <div ref={endRef} />
@@ -104,13 +156,13 @@ export default function ChatPanel({ conversationId }: { conversationId: number }
           placeholder="Type a message…  (Enter to send, Shift+Enter for a new line)"
           rows={1}
         />
-        <button type="submit" className="composer__send" disabled={sending || !text.trim()}>
-          {sending ? 'Sending…' : 'Send'}
+        <button type="submit" className="composer__send" disabled={generating || !text.trim()}>
+          {generating ? 'Sending…' : 'Send'}
         </button>
       </form>
       <p className="composer__error" role="status" aria-live="polite">
         {error ?? ''}
       </p>
-    </div>
+    </section>
   )
 }

@@ -218,3 +218,13 @@ this file stays scoped to tooling, key prompts, and AI corrections to avoid dupl
   appends the turn. Focus stays in the composer on reply (re-focus, never the bubble); `role="log"`
   announces new messages without focus steal; Enter sends / Shift+Enter newlines; scroll-into-view
   (not focus). **EP-3, EP-5, EP-6 all complete.**
+
+## Post-test UX iteration + reply history
+
+- **Reply uses server-pulled conversation history (done).** `send_message` pulls this conversation's
+  prior turns (user-scoped, capped 20) for the reply; classify stays per-message. Server-pulled, not
+  client-sent (trust/isolation). Verified live (multi-turn name recall). +1 unit test.
+- **UX changes from hands-on testing (done).** New chat is the default (lazy-created on first send,
+  title = first message); optimistic user bubble + typing indicator; colour-dominant **gradient**
+  bubbles (text still on the colour → contrast preserved); collapsible sidebar; logout at sidebar
+  foot; scroll confined to the message window + sidebar. Build green.

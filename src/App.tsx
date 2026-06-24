@@ -9,12 +9,13 @@ type State =
   | { phase: 'anon' }
   | { phase: 'authed'; user: AuthUser }
 
-// Story 2.8: gate on the session. Check /api/me once on load so a signed-in user
-// stays in across refreshes; an expired/invalid session (401) falls back to login.
-// The chat screen itself lands in EP-3/EP-5/EP-6.
+// Gate on the session, then a collapsible-sidebar chat shell. Default view is a fresh
+// "new chat" (selectedId = null) with the composer ready.
 export default function App() {
   const [state, setState] = useState<State>({ phase: 'loading' })
   const [selectedId, setSelectedId] = useState<number | null>(null)
+  const [sidebarOpen, setSidebarOpen] = useState(true)
+  const [listVersion, setListVersion] = useState(0)
 
   useEffect(() => {
     let active = true
@@ -29,7 +30,13 @@ export default function App() {
   async function handleLogout() {
     await logout()
     setSelectedId(null)
+    setSidebarOpen(true)
     setState({ phase: 'anon' })
+  }
+
+  function handleConversationCreated(id: number) {
+    setSelectedId(id)
+    setListVersion((v) => v + 1) // refresh the sidebar to show the new conversation
   }
 
   if (state.phase === 'loading') {
@@ -49,24 +56,37 @@ export default function App() {
   return (
     <div className="app">
       <header className="app__header">
+        <button
+          type="button"
+          className="app__toggle"
+          aria-expanded={sidebarOpen}
+          aria-controls="sidebar"
+          aria-label={sidebarOpen ? 'Hide conversations' : 'Show conversations'}
+          onClick={() => setSidebarOpen((o) => !o)}
+        >
+          ☰
+        </button>
         <span className="app__brand">PetaSight Chat</span>
-        <div className="app__account">
-          <span className="app__user">{state.user.email}</span>
-          <button type="button" className="app__logout" onClick={handleLogout}>
-            Log out
-          </button>
-        </div>
       </header>
+
       <div className="app__body">
-        <aside className="app__sidebar">
-          <ConversationList selectedId={selectedId} onSelect={setSelectedId} />
-        </aside>
+        {sidebarOpen && (
+          <aside id="sidebar" className="app__sidebar">
+            <div className="sidebar__list">
+              <ConversationList selectedId={selectedId} onSelect={setSelectedId} reloadKey={listVersion} />
+            </div>
+            <div className="sidebar__account">
+              <span className="sidebar__user" title={state.user.email}>
+                {state.user.email}
+              </span>
+              <button type="button" className="sidebar__logout" onClick={handleLogout}>
+                Log out
+              </button>
+            </div>
+          </aside>
+        )}
         <main className="app__main">
-          {selectedId === null ? (
-            <p className="app__placeholder">Select a conversation, or create a new one.</p>
-          ) : (
-            <ChatPanel key={selectedId} conversationId={selectedId} />
-          )}
+          <ChatPanel conversationId={selectedId} onConversationCreated={handleConversationCreated} />
         </main>
       </div>
     </div>

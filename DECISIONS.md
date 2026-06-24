@@ -319,6 +319,15 @@ decisions get appended under their epic as we complete them.
   conversations; server-pull keeps it consistent with T3 isolation. The **classify** node still sees
   only the current message, so the **bubble colour stays per-message-in-isolation** (Feature 1
   preserved). Verified live (multi-turn name recall).
+- **UX iteration (post-test).** From hands-on testing: (a) **new chat is the default** — `selectedId =
+  null` shows a ready, focused composer; the conversation is created **lazily on first send** (title =
+  first message), avoiding empty conversations; (b) **optimistic send** — the user bubble appears
+  immediately, a **typing indicator** shows below while the reply generates, then the real turn
+  replaces them; (c) **colour-dominant gradient bubbles** — chosen over transparent-center so the text
+  still sits on the mapped colour and the contrast requirement stays demonstrated; (d) **collapsible
+  sidebar** (`aria-expanded`), **logout moved to the sidebar foot**; (e) **scroll confined to panes**
+  (fixed-height shell; only the message window + sidebar scroll). Focus-on-reply behaviour preserved
+  throughout.
 
 ## Phase 5 — Deployment
 
