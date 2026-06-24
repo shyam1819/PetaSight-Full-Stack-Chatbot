@@ -51,11 +51,24 @@ solution approach is recorded later, in the phase where we decide it.
 
 ## Phase 2 — Architecture (frontend / backend)
 
-_Pending._
+- **Host: Vercel** — Vercel is not a container platform, so compute is serverless functions, not
+  a long-running server.
+- **Backend: Python serverless functions** in `api/` (bare Python handlers; framework optional) —
+  serverless is the only Vercel option, and Python aligns with the provided `review/` starter.
+- **Stateless backend → all state in the DB** — functions are ephemeral with no shared memory
+  between invocations, so no in-memory cache/session (the starter's process-wide `_CACHE` would
+  not hold). Identity and per-user data live in the store, enforced in the Python functions.
+- **One repo, same origin** — static frontend served at `/`, `api/*.py` at `/api/*`; no CORS, and
+  the Python functions are the enforced backend for the `@petasight.com` gate and isolation.
+- **Frontend: static SPA in the same project** — framework still being chosen (Vite+React vs
+  vanilla); **not** Next.js (its Node backend is redundant against Python `/api`). _Pending._
 
 ## Phase 3 — Temporary store
 
-_Pending._
+- **Neon Postgres (serverless, free tier)** — relational model fits `users` + per-user `messages`
+  cleanly, per-user isolation is a simple `WHERE user_id = ...`, scales to zero, and is $0 at this
+  scale. Provisioned via the Vercel Marketplace (env vars auto-injected). Required regardless,
+  since serverless functions can't keep state in memory.
 
 ## Phase 4 — Code development
 
