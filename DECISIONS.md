@@ -85,6 +85,12 @@ frontend · Neon Postgres store · one repo, same origin. No Redis/cache server.
 - **No Redis / cache server** — kept out to keep the approach simple. Neon is the only store; the
   color logic is cheap to recompute per request, so caching adds complexity without real benefit
   here (the starter's in-memory `_CACHE` wouldn't survive serverless invocations anyway).
+- **Connection vars** — the Neon/Vercel integration injects with a `petasight_postgres_` prefix.
+  Runtime functions use the **pooled** URL (`petasight_postgres_DATABASE_URL`, PgBouncer — right
+  for many short serverless connections); **migrations/DDL** use the **unpooled** URL
+  (`..._DATABASE_URL_UNPOOLED`, direct). DB creds live in Vercel only, never in GitHub.
+- **Schema** (`db/schema.sql`, idempotent): `users`, `conversations`, `messages`. Every
+  conversation and message carries `user_id` for per-user isolation. Applied to Neon.
 
 ## Phase 4 — Code development
 

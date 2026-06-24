@@ -1,3 +1,2 @@
 # Python serverless dependencies for the api/ functions.
-# Task 1 uses only the standard library, so this is intentionally empty.
-# Task 3 will add DB + LLM clients (e.g. psycopg, the LLM SDK).
+psycopg[binary]
