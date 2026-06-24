@@ -98,3 +98,7 @@ this file stays scoped to tooling, key prompts, and AI corrections to avoid dupl
   verify signature then expiry, `HttpOnly; Secure; SameSite=Lax`, 8h TTL, injectable secret
   (fails closed); 9 unit tests pass. Discussed bearer-token replay → recorded as THREATS T2;
   chose `SameSite=Lax` and against IP-binding (false logouts for mobile).
+- **2.3 user repository (done).** Repository pattern (`UserRepository` Protocol +
+  `PostgresUserRepository`), frozen `User` model, shared `db.connect()`. Model mapping
+  unit-tested; create/find/get/duplicate integration-tested against live Neon (pulled creds in a
+  throwaway venv, row cleaned up, secrets deleted after).

@@ -116,6 +116,12 @@ decisions get appended under their epic as we complete them.
   (same-origin, no cross-site need) and over `Strict` (preserves top-level-nav UX) — blocks CSRF.
   `SESSION_SECRET` injected, **fails closed** if missing. Replay tradeoffs →
   [THREATS.md](THREATS.md) T1/T2.
+- **2.3 User repository** — Repository pattern: `UserRepository` Protocol + concrete
+  `PostgresUserRepository`, a frozen `User` dataclass, and a shared `db.connect()` reading the
+  pooled DSN. The repo owns **all** user SQL so the auth service depends on the interface
+  (testable with a fake). `create()` raises on duplicate email; the service handles
+  trust-on-first-use. Repo verified by an integration check against live Neon (model mapping
+  unit-tested separately).
 
 ## Phase 5 — Deployment
 
