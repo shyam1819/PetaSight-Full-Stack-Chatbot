@@ -186,6 +186,12 @@ decisions get appended under their epic as we complete them.
   Vercel instances can collectively exceed the intended rate. True global throttling would need a
   **shared store** (e.g. Redis/Upstash), which we deliberately excluded (no Redis). Accepted for
   this scope as a known limitation; a production deployment would move to a shared-store limiter.
+- **Panic representation — 3-level ordinal category, not a float.** The LLM returns
+  `panic ∈ {calm, neutral, panicked}` (a constrained enum in the structured schema); code maps it
+  to the violet→magenta→yellow ramp: calm → pale yellow, neutral → magenta, panicked → violet.
+  Rationale: panic is the model's *subjective* judgment, so a 0–1 float is false precision and less
+  reproducible; an ordinal classification is reliable, testable, and aligns 1:1 with the brief's
+  three named colours. (Temperature stays continuous — it's a real number the user supplies.)
 
 ## Phase 5 — Deployment
 

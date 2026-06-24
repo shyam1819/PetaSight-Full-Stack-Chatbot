@@ -10,7 +10,12 @@ owns the rule precedence/collision (EP-3).
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Protocol
+from typing import Literal, Protocol
+
+# Panic is the LLM's subjective judgment, so it's an ordinal *category* (reliable, reproducible)
+# rather than a false-precision float. Code maps it onto the violet→magenta→yellow ramp (EP-3):
+# calm → pale yellow, neutral → magenta, panicked → violet.
+PanicLevel = Literal["calm", "neutral", "panicked"]
 
 
 @dataclass(frozen=True)
@@ -19,7 +24,7 @@ class MessageAnalysis:
     city: str | None
     temperature_c: float | None
     decimal_value: str | None  # as written by the model, e.g. "42.37"; code re-validates it
-    panic: float  # 0.0 calm .. 1.0 high panic
+    panic: PanicLevel
 
 
 class LLMClient(Protocol):

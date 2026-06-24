@@ -17,18 +17,20 @@ class FakeLLMClient:
 
 def test_fake_satisfies_interface_and_returns_analysis():
     canned = MessageAnalysis(
-        reply="Stay safe!", city="Austin", temperature_c=21.5, decimal_value=None, panic=0.8
+        reply="Stay safe!", city="Austin", temperature_c=21.5, decimal_value=None, panic="panicked"
     )
     client: LLMClient = FakeLLMClient(canned)
     out = client.analyze("Austin 21.5 we need to leave now")
     assert out is canned
-    assert out.city == "Austin" and out.temperature_c == 21.5 and out.panic == 0.8
+    assert out.city == "Austin" and out.temperature_c == 21.5 and out.panic == "panicked"
 
 
 def test_message_analysis_holds_decimal_and_nulls():
-    a = MessageAnalysis(reply="r", city=None, temperature_c=None, decimal_value="42.37", panic=0.0)
+    a = MessageAnalysis(
+        reply="r", city=None, temperature_c=None, decimal_value="42.37", panic="calm"
+    )
     assert a.decimal_value == "42.37"
-    assert a.city is None and a.temperature_c is None
+    assert a.city is None and a.temperature_c is None and a.panic == "calm"
 
 
 def _run():

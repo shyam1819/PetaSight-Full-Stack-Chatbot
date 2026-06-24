@@ -7,6 +7,7 @@ Reads GROQ_API_KEY from the environment unless an api_key is injected.
 from __future__ import annotations
 
 import os
+from typing import Literal
 
 from langchain_groq import ChatGroq
 from pydantic import BaseModel, Field
@@ -22,7 +23,8 @@ _SYSTEM = (
     "   - city: a city named in the message, else null;\n"
     "   - temperature_c: a temperature in Celsius associated with that city, else null;\n"
     "   - decimal_value: a standalone decimal number exactly as written (e.g. '42.37'), else null;\n"
-    "   - panic: how urgent or panicked the message sounds, 0.0 (calm) to 1.0 (high panic).\n"
+    "   - panic: classify how the message feels as exactly one of "
+    "'calm', 'neutral', or 'panicked'.\n"
     "Use null when a signal is absent. Do not invent values."
 )
 
@@ -36,11 +38,9 @@ class _AnalysisSchema(BaseModel):
     decimal_value: str | None = Field(
         default=None, description="A standalone decimal number as written, else null."
     )
-    panic: float = Field(description="Urgency/panic from 0.0 (calm) to 1.0 (high panic).")
-
-
-def _clamp01(value: float) -> float:
-    return max(0.0, min(1.0, float(value)))
+    panic: Literal["calm", "neutral", "panicked"] = Field(
+        description="How urgent the message feels: calm, neutral, or panicked."
+    )
 
 
 class GroqLLMClient:
@@ -62,5 +62,5 @@ class GroqLLMClient:
             city=result.city,
             temperature_c=result.temperature_c,
             decimal_value=result.decimal_value,
-            panic=_clamp01(result.panic),
+            panic=result.panic,
         )
