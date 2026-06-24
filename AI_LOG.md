@@ -210,3 +210,7 @@ this file stays scoped to tooling, key prompts, and AI corrections to avoid dupl
 - **5.6 conversations list UI (done).** `ConversationList` sidebar (view/select/create) wired to
   `/api/conversations`; accessible (nav, aria-current, role=status). Two-pane signed-in shell. Build
   green.
+- **5.7 message thread + contrast (done; also EP-6 6.6).** `MessageThread` renders user/assistant
+  bubbles; assistant gets the engine `bubble_color` with text colour derived via WCAG luminance
+  (`readableTextColor`). Verified the contrast picks across all engine colours (danger zones → dark
+  text). Bubbles opaque → no compositing needed.

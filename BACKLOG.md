@@ -91,7 +91,7 @@ Backend
 
 UI
 - ✅ 5.6 [UI] Conversations list (view, select, create new)
-- ⬜ 5.7 [UI] Message thread (load history, render user/assistant bubbles)
+- ✅ 5.7 [UI] Message thread (load history, render user/assistant bubbles)
 - ⬜ 5.8 [UI] Send-message flow integrated with the backend
 
 ### EP-6 — Frontend Experience & Accessibility ⬜
@@ -101,7 +101,7 @@ UI
 - ⬜ 6.3 [UI] Keyboard operability (tab order, visible focus rings, Enter-to-send)
 - ⬜ 6.4 [UI] Focus management: focus stays in input on new reply (no yank)
 - ⬜ 6.5 [UI] `aria-live="polite"` thread announcements
-- ⬜ 6.6 [UI] Per-bubble readable text contrast (luminance-based; account for opacity composite)
+- ✅ 6.6 [UI] Per-bubble readable text contrast (luminance-based; bubbles are opaque so no compositing needed)
 - ⬜ 6.7 [UI] Aesthetics: chat background + bubble opacity (the deferred styling)
 
 ### EP-7 — Security Threat Model & Code Review ⬜

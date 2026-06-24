@@ -252,3 +252,42 @@ body {
   background: #e7ecfb;
   font-weight: 500;
 }
+
+/* Message thread + bubbles */
+.thread {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.thread__status {
+  color: #55554f;
+  font-size: 0.9rem;
+}
+
+.bubble {
+  max-width: 75%;
+  padding: 0.6rem 0.85rem;
+  border-radius: 14px;
+  line-height: 1.45;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.bubble--user {
+  align-self: flex-end;
+  background: #2c2c2a;
+  color: #ffffff;
+  border-bottom-right-radius: 4px;
+}
+
+/* Assistant default (overridden inline by the engine's colour + readable text). */
+.bubble--assistant {
+  align-self: flex-start;
+  background: #eceae3;
+  color: #1a1a1a;
+  border-bottom-left-radius: 4px;
+}

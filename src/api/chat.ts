@@ -22,6 +22,19 @@ export async function listConversations(): Promise<Conversation[]> {
   }
 }
 
+export async function getHistory(conversationId: number): Promise<ChatMessage[]> {
+  try {
+    const res = await fetch(`/api/messages?conversation_id=${conversationId}`, {
+      credentials: 'same-origin',
+    })
+    if (!res.ok) return []
+    const data = await res.json()
+    return (data.messages as ChatMessage[]) ?? []
+  } catch {
+    return []
+  }
+}
+
 export async function createConversation(title?: string): Promise<Conversation | null> {
   try {
     const res = await fetch('/api/conversations', {

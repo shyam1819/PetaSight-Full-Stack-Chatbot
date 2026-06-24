@@ -299,6 +299,12 @@ decisions get appended under their epic as we complete them.
   chat client; view / select / create-new. Accessible: `nav` landmark with `aria-label`,
   `aria-current` on the selected item, keyboard-operable buttons, `role="status"` loading. Integrated
   into the signed-in shell as a two-pane layout; `selectedId` state, reset on logout.
+- **5.7 Message thread + contrast (also EP-6 6.6)** — `MessageThread` loads history and renders
+  bubbles: user (right, dark) and assistant (left, the engine's `bubble_color`). Per-bubble **text
+  colour** is derived from the background via WCAG relative luminance + contrast ratio
+  (`readableTextColor`), picking white or near-black for max legibility — verified across every
+  engine colour (danger zones pale yellow / light purple / light gray correctly get dark text).
+  Bubbles are opaque, so no opacity compositing is needed. Loading via `role="status" aria-live`.
 
 ## Phase 5 — Deployment
 

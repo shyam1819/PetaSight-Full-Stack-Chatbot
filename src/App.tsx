@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import LoginForm from './components/LoginForm'
 import ConversationList from './components/ConversationList'
+import MessageThread from './components/MessageThread'
 import { getMe, logout, type AuthUser } from './api/auth'
 
 type State =
@@ -64,9 +65,7 @@ export default function App() {
           {selectedId === null ? (
             <p className="app__placeholder">Select a conversation, or create a new one.</p>
           ) : (
-            <p className="app__placeholder">
-              Conversation {selectedId} — the message thread arrives in story 5.7.
-            </p>
+            <MessageThread key={selectedId} conversationId={selectedId} />
           )}
         </main>
       </div>
