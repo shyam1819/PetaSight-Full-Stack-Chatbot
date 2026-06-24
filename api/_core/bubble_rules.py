@@ -69,3 +69,26 @@ def decimal_rule(message: str, analysis: MessageAnalysis) -> Color | None:
     if decimal is None:
         return None
     return decimal_color(_first_two_fractional_digits(decimal))
+
+
+# Rule 3 — panic (LLM-classified 3-level enum). calm → pale yellow, neutral → magenta,
+# panicked → violet. Discrete categories map straight to the brief's three named colours.
+PANIC_PALE_YELLOW = Color(0xF4, 0xED, 0xA6)  # calm
+PANIC_MAGENTA = Color(0xD6, 0x21, 0x9B)      # neutral
+PANIC_VIOLET = Color(0x7A, 0x1F, 0xA2)       # panicked
+
+_PANIC_COLORS = {
+    "calm": PANIC_PALE_YELLOW,
+    "neutral": PANIC_MAGENTA,
+    "panicked": PANIC_VIOLET,
+}
+
+
+def panic_color(level: str) -> Color:
+    """Map the 3-level panic category to its colour (defensive default: neutral/magenta)."""
+    return _PANIC_COLORS.get(level, PANIC_MAGENTA)
+
+
+def panic_rule(message: str, analysis: MessageAnalysis) -> Color:
+    """Rule 3: the fallback — always matches, colouring by the LLM's panic category."""
+    return panic_color(analysis.panic)

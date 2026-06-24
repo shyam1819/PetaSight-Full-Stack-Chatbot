@@ -187,6 +187,10 @@ decisions get appended under their epic as we complete them.
   `3.0`→`00`) map to a grayscale ramp: `.00` `#ECEAE3` lightest → `.99` `#1C1C1C` darkest. 4 unit
   tests including the code-authoritative case (text without a decimal → None even if the LLM
   reported one).
+- **3.4 PanicRule** — the 3-level enum maps straight to the brief's named colours (no
+  interpolation): `calm` → pale yellow `#F4EDA6`, `neutral` → magenta `#D6219B`, `panicked` →
+  violet `#7A1FA2`. `panic_rule` is the **fallback** (always matches); defensive default neutral. 2
+  unit tests.
 
 ### EP-4 — LLM Backend Integration
 - **Provider/framework** — Groq + `openai/gpt-oss-120b` via **LangChain `ChatGroq`** behind the

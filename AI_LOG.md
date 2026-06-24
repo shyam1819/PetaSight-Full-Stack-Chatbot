@@ -169,3 +169,5 @@ this file stays scoped to tooling, key prompts, and AI corrections to avoid dupl
 - **3.3 DecimalRule (done).** Code-authoritative regex extracts the standalone decimal (ignores the
   LLM's value, excludes versions/IPs); first two fractional digits (right-padded) → grayscale ramp
   `#ECEAE3`→`#1C1C1C`. 4 unit tests incl. the code-wins case.
+- **3.4 PanicRule (done).** 3-level enum → named colours: calm `#F4EDA6`, neutral `#D6219B`,
+  panicked `#7A1FA2`; fallback rule (always matches). 2 unit tests. All three rules now built.

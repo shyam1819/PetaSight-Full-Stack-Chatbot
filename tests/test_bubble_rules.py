@@ -5,9 +5,14 @@ from api._core.bubble_rules import (
     DECIMAL_LIGHTEST,
     DEEP_BLUE,
     LIGHT_PURPLE,
+    PANIC_MAGENTA,
+    PANIC_PALE_YELLOW,
+    PANIC_VIOLET,
     decimal_color,
     decimal_rule,
     extract_standalone_decimal,
+    panic_color,
+    panic_rule,
     temperature_color,
     temperature_rule,
 )
@@ -69,6 +74,18 @@ def test_decimal_rule_first_two_fractional_digits():
 def test_decimal_rule_is_code_authoritative():
     # No decimal in the text → None, even though the LLM reported one. Regex (code) wins.
     assert decimal_rule("no numbers here", _analysis(decimal_value="99.99")) is None
+
+
+def test_panic_color_categories():
+    assert panic_color("calm") == PANIC_PALE_YELLOW
+    assert panic_color("neutral") == PANIC_MAGENTA
+    assert panic_color("panicked") == PANIC_VIOLET
+
+
+def test_panic_rule_always_matches():
+    assert panic_rule("anything", _analysis(panic="panicked")) == PANIC_VIOLET
+    assert panic_rule("anything", _analysis(panic="neutral")) == PANIC_MAGENTA
+    assert panic_rule("anything", _analysis(panic="calm")) == PANIC_PALE_YELLOW
 
 
 def _run():
