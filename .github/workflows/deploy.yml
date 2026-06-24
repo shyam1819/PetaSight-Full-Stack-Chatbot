@@ -32,14 +32,10 @@ jobs:
       - name: Compile-check Python functions
         run: python3 -m py_compile api/*.py
 
+      # Deploy. Vercel builds in its own cloud (its Python builder provides `uv`
+      # there), so CI does not need uv / a prebuilt step. dev -> Preview, main -> Production.
       - name: Install Vercel CLI
         run: npm install -g vercel@latest
 
-      - name: Pull Vercel environment
-        run: vercel pull --yes --environment=${{ github.ref == 'refs/heads/main' && 'production' || 'preview' }} --token=${{ secrets.VERCEL_TOKEN }}
-
-      - name: Build with Vercel
-        run: vercel build ${{ github.ref == 'refs/heads/main' && '--prod' || '' }} --token=${{ secrets.VERCEL_TOKEN }}
-
       - name: Deploy to Vercel
-        run: vercel deploy --prebuilt ${{ github.ref == 'refs/heads/main' && '--prod' || '' }} --token=${{ secrets.VERCEL_TOKEN }}
+        run: vercel deploy ${{ github.ref == 'refs/heads/main' && '--prod' || '' }} --yes --token=${{ secrets.VERCEL_TOKEN }}

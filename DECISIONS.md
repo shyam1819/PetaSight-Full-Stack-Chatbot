@@ -94,3 +94,8 @@ _Pending._
   `main` → **Production**. Work happens on `dev`; `main` stays releasable.
 - Deploy uses the Vercel CLI with `VERCEL_TOKEN` / `VERCEL_ORG_ID` / `VERCEL_PROJECT_ID` stored as
   GitHub Actions secrets (set once by the repo owner).
+- **Build happens in Vercel's cloud, not prebuilt in CI** — the Python builder uses `uv`, which
+  isn't on the CI runner (or a local machine), so `vercel build`/`--prebuilt` fails with
+  `spawn uv ENOENT`. Using plain `vercel deploy` lets Vercel build server-side where `uv` exists;
+  our CI gate (npm build + `py_compile`) still runs first. Local `vercel dev` needs `uv` installed
+  (`brew install uv`).
