@@ -66,7 +66,7 @@ Backend
 - ✅ 3.3 [BE] DecimalRule: standalone decimal, first two fractional digits → grayscale/sepia
 - ✅ 3.4 [BE] PanicRule: calm/neutral/panicked → pale yellow/magenta/violet
 - ✅ 3.5 [BE] Resolver (first-match-wins chain) + collision decision (strict first-match-wins; temp needs a unit)
-- ⬜ 3.6 [BE] Attach computed color to the reply, persist `bubble_color`
+- 🔄 3.6 [BE] Attach computed color to the reply (ChatService done), persist `bubble_color` → EP-5
 
 UI
 - ⬜ 3.7 [UI] Apply the returned background color to reply bubbles

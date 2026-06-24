@@ -177,3 +177,6 @@ this file stays scoped to tooling, key prompts, and AI corrections to avoid dupl
   next to a city is NOT a temperature — tightened the classify prompt. Verified live: "Austin
   21.5"→decimal, "Austin 21.5C" / "21.5 degrees in Austin"→temperature, "the score is 21.5"→decimal.
   14 unit tests.
+- **3.6 ChatService compute/attach (done).** `build_reply` composes analyze → resolve into
+  `AssistantReply(reply, bubble_color, rule, analysis)`; LLMClient-injected, no psycopg/langchain, 3
+  fake-LLM tests. DB persist deferred to EP-5 (needs conversation/message repo).

@@ -209,6 +209,11 @@ decisions get appended under their epic as we complete them.
   is stored as provenance. Collision + temperature-unit interpretation per Feature 1; the classify
   prompt was tightened so `temperature_c` is set only with a unit/description. 4 resolver tests (14
   total); verified live end to end.
+- **3.6 ChatService (compute/attach).** `ChatService.build_reply(message)` composes `analyze()` →
+  `resolve_bubble_color()` into `AssistantReply(reply, bubble_color hex, rule, analysis)`. Depends
+  on the `LLMClient` interface (DI), imports no psycopg/langchain → unit-tested with a fake LLM (3
+  tests). The DB **persistence** of `bubble_color` + provenance lands in EP-5 (message repo + chat
+  endpoint), where the conversation/user context exists.
 
 ### EP-4 — LLM Backend Integration
 - **Provider/framework** — Groq + `openai/gpt-oss-120b` via **LangChain `ChatGroq`** behind the
