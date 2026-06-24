@@ -68,12 +68,6 @@ frontend · Neon Postgres store · one repo, same origin. No Redis/cache server.
   public. "Only reachable through the frontend" = require a server-issued session on every API
   call (anon/cross-user → 401/403). Vercel Deployment Protection is **disabled** (it blocks the
   whole deployment incl. the frontend, so it's not a backend-only gate). Feeds [THREATS.md](THREATS.md).
-- **Session = stateless HMAC-signed cookie** (story 2.2): token is `b64(payload).b64(HMAC-SHA256)`
-  with `{sub=user_id, email, iat, exp, jti}`; verify signature (constant-time) **then** expiry, no
-  server-side session store. Cookie flags `HttpOnly; Secure; SameSite=Lax`; TTL 8h; random `jti`
-  per token. `SameSite=Lax` chosen over `None` (same-origin app, no cross-site need) and over
-  `Strict` (keeps top-level-nav UX) — blocks CSRF. `SESSION_SECRET` is injected and **fails closed**
-  if missing. Replay tradeoffs documented in [THREATS.md](THREATS.md) T1/T2.
 - **Frontend: Vite + React (TypeScript)**, static SPA in the same project — scaffolded from the
   minimal official Vite starter (not a heavy third-party template, so all code is ours and
   reviewable). React chosen for deliberate **focus control** (`ref` to return focus to the input)
@@ -100,11 +94,28 @@ frontend · Neon Postgres store · one repo, same origin. No Redis/cache server.
 
 ## Phase 4 — Code development
 
-- **Shared backend code under `api/_<pkg>/`, imported package-style** —
-  `from api._core.<module> import <name>`. Verified on Vercel: the whole `api/` tree is bundled,
-  cwd `/var/task` is on `sys.path` so `api.` resolves; a bare `from _core...` does **not** work at
-  top level. Underscore-prefixed dirs (`_core`, `_services`, …) aren't treated as routes. This
-  keeps the layered (handler → service → repository) design without per-handler `sys.path` hacks.
+Implementation decisions organized by **epic / story** (mirrors [BACKLOG.md](BACKLOG.md)).
+Cross-cutting feature/architecture/store/deploy decisions stay in Phases 1–3 and 5. New story
+decisions get appended under their epic as we complete them.
+
+### EP-1 — Deployment & Infrastructure
+- **1.5 Shared-module import convention** — backend shared code lives under `api/_<pkg>/` and is
+  imported package-style: `from api._core.<module> import <name>`. Verified on Vercel: the whole
+  `api/` tree is bundled and cwd `/var/task` is on `sys.path` so `api.` resolves; a bare
+  `from _core...` does **not** work at top level. Underscore-prefixed dirs (`_core`, `_services`,
+  …) aren't treated as routes. Enables handler → service → repository layering without per-handler
+  `sys.path` hacks.
+
+### EP-2 — Authentication & Access Control
+- **2.1 Password hashing** — PBKDF2-HMAC-SHA256 (stdlib), per-password salt, ~210k iterations,
+  self-describing stored format (`pbkdf2_sha256$iterations$salt$hash`), constant-time verify.
+  Chosen over bcrypt/argon2 to avoid a native dependency on the serverless build.
+- **2.2 Stateless sessions** — HMAC-signed cookie token `{sub, email, iat, exp, jti}`; verify
+  signature (constant-time) **then** expiry; no server-side session store. Flags
+  `HttpOnly; Secure; SameSite=Lax`; 8h TTL; random `jti` per token. `SameSite=Lax` over `None`
+  (same-origin, no cross-site need) and over `Strict` (preserves top-level-nav UX) — blocks CSRF.
+  `SESSION_SECRET` injected, **fails closed** if missing. Replay tradeoffs →
+  [THREATS.md](THREATS.md) T1/T2.
 
 ## Phase 5 — Deployment
 
