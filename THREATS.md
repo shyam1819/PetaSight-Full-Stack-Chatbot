@@ -24,3 +24,24 @@ previously copied token stays valid until it expires — **logout cannot revoke 
 Accepted for this scope, bounded by the short TTL. If instant revocation were required: a
 server-side token denylist (breaks pure statelessness — a deliberate call) or rotating
 `SESSION_SECRET` (invalidates everyone's sessions at once).
+
+## T2 — Stolen session cookie replayed from another source
+
+**Context.** The session cookie is a bearer token: the HMAC signature proves the token is
+authentic and untampered, **not** that the sender is its rightful owner. Anyone holding the
+cookie value is treated as that user until it expires.
+
+**Attack.** An attacker copies a valid session cookie and replays it from a different
+machine/IP/browser; the server verifies the signature, reads `user_id`, and serves the victim's
+data.
+
+**Defense (shipped).** The common *remote* theft vectors are closed: `HttpOnly` (XSS can't read
+it), `Secure` + HTTPS (not sniffable in transit), `SameSite=Lax` (not sent cross-site). Short TTL
+bounds the replay window. Per-user **isolation** means a stolen token only ever impersonates that
+one user — it never crosses into other users' data.
+
+**Residual risk / tradeoff.** A cookie copied from the victim's *own* browser/device is
+replayable until expiry — inherent to stateless bearer sessions. We deliberately **avoid
+IP-binding** (breaks mobile/roaming users with false logouts) and a **server-side revocation
+store** (breaks statelessness). If tighter control were needed: shorten the TTL further, or move
+to stateful sessions with revocation.

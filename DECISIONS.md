@@ -68,6 +68,12 @@ frontend · Neon Postgres store · one repo, same origin. No Redis/cache server.
   public. "Only reachable through the frontend" = require a server-issued session on every API
   call (anon/cross-user → 401/403). Vercel Deployment Protection is **disabled** (it blocks the
   whole deployment incl. the frontend, so it's not a backend-only gate). Feeds [THREATS.md](THREATS.md).
+- **Session = stateless HMAC-signed cookie** (story 2.2): token is `b64(payload).b64(HMAC-SHA256)`
+  with `{sub=user_id, email, iat, exp, jti}`; verify signature (constant-time) **then** expiry, no
+  server-side session store. Cookie flags `HttpOnly; Secure; SameSite=Lax`; TTL 8h; random `jti`
+  per token. `SameSite=Lax` chosen over `None` (same-origin app, no cross-site need) and over
+  `Strict` (keeps top-level-nav UX) — blocks CSRF. `SESSION_SECRET` is injected and **fails closed**
+  if missing. Replay tradeoffs documented in [THREATS.md](THREATS.md) T1/T2.
 - **Frontend: Vite + React (TypeScript)**, static SPA in the same project — scaffolded from the
   minimal official Vite starter (not a heavy third-party template, so all code is ours and
   reviewable). React chosen for deliberate **focus control** (`ref` to return focus to the input)
