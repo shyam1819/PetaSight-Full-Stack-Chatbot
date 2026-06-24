@@ -106,3 +106,7 @@ this file stays scoped to tooling, key prompts, and AI corrections to avoid dupl
   trust-on-first-use, wrong-password rejection (no overwrite), email normalization; outcome enum
   for handler mapping. Extracted `UserRepository` to `repositories.py` (DIP) so the service has
   zero psycopg dependency (verified `psycopg loaded: False`); 6 unit tests with a fake repo.
+- **2.5 auth endpoints (done).** login/logout/me wired to `AuthService` + sessions via thin
+  handlers + `http_helpers`. Verified live on Preview: 201 create → 200 me → 200 re-auth → 401
+  wrong-pw → 403 bad-domain → 400 missing → 200 logout → 401 me. `SESSION_SECRET` set in Vercel
+  (Preview/Prod).

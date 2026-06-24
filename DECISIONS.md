@@ -129,6 +129,11 @@ decisions get appended under their epic as we complete them.
   normalization (strip+lower). Session secret injectable. Interfaces extracted to
   `repositories.py` (DIP) so the service imports **no psycopg** — verified, and unit-tested with a
   fake repo (6 tests).
+- **2.5 Auth endpoints** — thin handlers over the service/session primitives: `POST /api/login`
+  (outcome→status 201/200/401/403/400, sets the HttpOnly cookie), `POST /api/logout` (clears the
+  cookie, idempotent), `GET /api/me` (identity from the verified cookie, else 401). Shared
+  `http_helpers` for body/JSON; **503 fail-closed** if `SESSION_SECRET` is missing. Replaced the
+  Task-1 login stub. Verified live end-to-end on the Preview deploy (8-step round-trip).
 
 ## Phase 5 — Deployment
 
