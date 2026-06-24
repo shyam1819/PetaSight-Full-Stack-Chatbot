@@ -112,7 +112,7 @@ decisions get appended under their epic as we complete them.
   Chosen over bcrypt/argon2 to avoid a native dependency on the serverless build.
 - **2.2 Stateless sessions** — HMAC-signed cookie token `{sub, email, iat, exp, jti}`; verify
   signature (constant-time) **then** expiry; no server-side session store. Flags
-  `HttpOnly; Secure; SameSite=Lax`; 8h TTL; random `jti` per token. `SameSite=Lax` over `None`
+  `HttpOnly; Secure; SameSite=Lax`; 1h TTL; random `jti` per token. `SameSite=Lax` over `None`
   (same-origin, no cross-site need) and over `Strict` (preserves top-level-nav UX) — blocks CSRF.
   `SESSION_SECRET` injected, **fails closed** if missing. Replay tradeoffs →
   [THREATS.md](THREATS.md) T1/T2.

@@ -18,7 +18,7 @@ import secrets
 import time
 
 COOKIE_NAME = "session"
-SESSION_TTL_SECONDS = 8 * 60 * 60  # short-lived; bounds the replay window (see THREATS T1)
+SESSION_TTL_SECONDS = 1 * 60 * 60  # 1h — short-lived; bounds the replay window (see THREATS T1/T2)
 _SECRET_ENV = "SESSION_SECRET"
 
 

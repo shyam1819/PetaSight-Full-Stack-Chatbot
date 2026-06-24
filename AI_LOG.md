@@ -95,7 +95,7 @@ this file stays scoped to tooling, key prompts, and AI corrections to avoid dupl
   logout/stateless-revocation tradeoff → recorded as THREATS T1; flagged for final review in
   REVIEW.md.
 - **2.2 signed-cookie sessions (done).** Stateless HMAC-signed token (`sub/email/iat/exp/jti`),
-  verify signature then expiry, `HttpOnly; Secure; SameSite=Lax`, 8h TTL, injectable secret
+  verify signature then expiry, `HttpOnly; Secure; SameSite=Lax`, 1h TTL, injectable secret
   (fails closed); 9 unit tests pass. Discussed bearer-token replay → recorded as THREATS T2;
   chose `SameSite=Lax` and against IP-binding (false logouts for mobile).
 - **2.3 user repository (done).** Repository pattern (`UserRepository` Protocol +
