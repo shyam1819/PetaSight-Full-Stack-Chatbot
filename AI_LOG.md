@@ -147,3 +147,7 @@ this file stays scoped to tooling, key prompts, and AI corrections to avoid dupl
   unchanged). Verified live: **parallel 0.7s vs sequential 1.75s (~2.5×)**, correct signals.
   Tradeoff: 2× LLM calls + `langgraph` dep. Also decided: **persist `bubble_color` + provenance**;
   history reads stored (never recompute / replay the LLM — also survives key revocation).
+- **4.3 rate limiting (done).** `InMemoryRateLimiter` — 20/min (`requests_per_second=20/60`),
+  `check_every_n_seconds=0.1`, `max_bucket_size=20`. One **module-level** limiter shared by both
+  `ChatGroq` instances (combined cap, persists across warm-instance requests). Verified the
+  rate-limited client still constructs + `analyze()`s live.
