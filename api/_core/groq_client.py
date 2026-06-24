@@ -1,9 +1,12 @@
 """Groq-backed LLMClient using a LangGraph fan-out: reply + classify run in parallel.
 
-Two independent nodes branch from START and run concurrently (LangGraph executes same-super-step
-nodes in parallel), then join — so the chat reply and the signal classification are produced
-simultaneously and we wait for both. Each uses a focused prompt/temperature.
+A single ChatGroq instance backs both nodes — the `reply` node invokes it directly, the `classify`
+node wraps it with `.with_structured_output()`. Both nodes branch from START and run concurrently
+(LangGraph runs same-super-step nodes in parallel), then join, so reply + signals are produced
+simultaneously and we wait for both.
 
+`get_groq_client()` is a lazily-initialized, process-wide singleton: the model + compiled graph are
+built once per warm instance and reused across requests, all paced by one shared rate limiter.
 Isolated here so LangChain/LangGraph/pydantic load only when this concrete client is constructed;
 the rest of the app depends on the stdlib `LLMClient` interface. Model: openai/gpt-oss-120b.
 """
@@ -22,7 +25,7 @@ from api._core.llm import MessageAnalysis
 _MODEL = "openai/gpt-oss-120b"
 
 # Module-level so it persists across requests on a warm instance (per-instance only in serverless
-# — see DECISIONS 4.3). Shared by both ChatGroq instances → 20 calls/min is a combined cap.
+# — see DECISIONS 4.3). Shared by every call → 20 calls/min is a combined cap.
 _RATE_LIMITER = InMemoryRateLimiter(
     requests_per_second=20 / 60,   # 20 requests per minute
     check_every_n_seconds=0.1,     # poll the bucket every 100ms
@@ -61,22 +64,20 @@ class _State(TypedDict):
 
 
 class GroqLLMClient:
-    """LLMClient backed by Groq, running reply + classify in parallel via LangGraph."""
+    """LLMClient backed by Groq; one model drives both parallel LangGraph nodes."""
 
-    def __init__(self, *, api_key: str | None = None, model: str = _MODEL):
-        common: dict = {"model": model}
+    def __init__(self, *, api_key: str | None = None, model: str = _MODEL, temperature: float = 0.3):
+        kwargs: dict = {"model": model, "temperature": temperature, "rate_limiter": _RATE_LIMITER}
         key = api_key or os.environ.get("GROQ_API_KEY")
         if key:
-            common["api_key"] = key
-        self._chat = ChatGroq(**common, temperature=0.5, rate_limiter=_RATE_LIMITER)
-        self._classifier = ChatGroq(
-            **common, temperature=0.0, rate_limiter=_RATE_LIMITER
-        ).with_structured_output(_Signals)
+            kwargs["api_key"] = key
+        self._model = ChatGroq(**kwargs)                       # single instance for both nodes
+        self._classifier = self._model.with_structured_output(_Signals)
         self._graph = self._build_graph()
 
     def _build_graph(self):
         def reply_node(state: _State) -> dict:
-            msg = self._chat.invoke([("system", REPLY_SYSTEM), ("human", state["message"])])
+            msg = self._model.invoke([("system", REPLY_SYSTEM), ("human", state["message"])])
             return {"reply": msg.content}
 
         def classify_node(state: _State) -> dict:
@@ -105,3 +106,14 @@ class GroqLLMClient:
             decimal_value=signals.decimal_value,
             panic=signals.panic,
         )
+
+
+_instance: GroqLLMClient | None = None
+
+
+def get_groq_client() -> GroqLLMClient:
+    """Process-wide singleton (lazy): one model + graph per warm instance, reused across requests."""
+    global _instance
+    if _instance is None:
+        _instance = GroqLLMClient()
+    return _instance

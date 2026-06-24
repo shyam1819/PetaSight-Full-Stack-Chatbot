@@ -175,9 +175,16 @@ decisions get appended under their epic as we complete them.
 - **Call architecture — two parallel calls via LangGraph fan-out.** `analyze()` runs a focused chat
   `reply` node and a structured `classify` node concurrently (both branch from `START` in one
   super-step, then join) and waits for both — so reply + signals are produced simultaneously. Chosen
-  over a single unified call for separation of concerns / per-node prompts+temperatures (reply at
-  0.5, classifier at 0.0), accepting **2× LLM calls** and the `langgraph` dependency weight. The
-  `LLMClient` interface is unchanged, so the rest of the app is unaffected.
+  over a single unified call for separation of concerns / per-node **prompts** (REPLY vs CLASSIFY),
+  accepting **2× LLM calls** and the `langgraph` dependency weight. The `LLMClient` interface is
+  unchanged, so the rest of the app is unaffected.
+- **Single model instance + process-wide singleton.** One `ChatGroq` backs **both** graph nodes
+  (reply invokes it directly; classify wraps it via `with_structured_output`) — schema-constrained
+  classification makes per-node temperatures unnecessary, so a single shared model is simpler.
+  `get_groq_client()` is a **lazy module-level singleton**: the model + compiled graph are built
+  **once per warm instance** and reused across requests, all paced by the one shared rate limiter
+  (so rate limiting is global *within* the instance). DI preserved — services depend on the
+  `LLMClient` interface, the composition root supplies the singleton, tests inject a fake.
 - **LLM classifies, code decides.** The `classify` node returns signals for all three conditions
   (`city`, `temperature_c`, `decimal_value`, `panic`); the LLM classifies (city/temp/panic need
   understanding; it also reports the decimal), but **code stays authoritative** — it re-validates
