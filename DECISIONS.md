@@ -279,6 +279,12 @@ decisions get appended under their epic as we complete them.
   raw signals not persisted — not needed to render). Added the `color_rule` column via an idempotent
   migration applied to live Neon. **Closes 3.6's persist half.** Integration-tested incl.
   message-level isolation.
+- **5.3 Chat service orchestration** — `ChatService.send_message(conversation_id, user_id, text)`:
+  verifies conversation ownership (`None` → 404), **computes the reply first** (LLM failure → no
+  partial DB write), then persists the user message and the coloured assistant message. Depends on
+  the `LLMClient` + repo interfaces (DI; no psycopg/langchain). Ownership is enforced here; the
+  endpoint supplies `user_id` from the verified cookie. Unit-tested with fakes incl. the
+  unowned-conversation rejection (5 tests).
 
 ## Phase 5 — Deployment
 

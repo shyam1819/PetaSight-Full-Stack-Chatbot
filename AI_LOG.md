@@ -190,3 +190,6 @@ this file stays scoped to tooling, key prompts, and AI corrections to avoid dupl
   filtered by `user_id`; persists `bubble_color` + `color_rule` (added the column via idempotent
   migration to live Neon). `Message` model + unit test; integration-tested incl. message-level
   isolation (B reads nothing from A's conversation). **Closes 3.6's persist half.**
+- **5.3 chat service orchestration (done).** `send_message` verifies ownership → compute-first →
+  persist user + coloured assistant message; returns None for unowned conversations. DI over repo
+  interfaces (no psycopg/langchain); 5 fake-based unit tests.
