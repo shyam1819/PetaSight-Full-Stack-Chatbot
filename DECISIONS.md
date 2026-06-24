@@ -166,6 +166,17 @@ decisions get appended under their epic as we complete them.
   state). Loading announced via `role="status" aria-live`. Completes the EP-2 frontend; the chat
   screen itself is deferred to EP-3/EP-5/EP-6.
 
+### EP-3 — Bubble Colour Engine
+- **Colour decided + stored in the backend; contrast computed in the frontend.** The bubble
+  background colour is a *domain decision* (LLM signals → rules → colour) persisted as the source of
+  truth (stable, cheap on read, survives `GROQ_API_KEY` revocation) — so it's computed server-side.
+  The readable *text* colour depends on the actual painted background (incl. opacity compositing),
+  which only the browser knows, so it's computed in the frontend (EP-6).
+- **3.1 Colour primitives** — `colors.py`: a frozen `Color(r,g,b)` with `.to_hex()` (the stored
+  form), plus pure `clamp`, `lerp`, `lerp_color` (interpolation factor clamped), and a multi-stop
+  `ramp(stops, t)` that backs the 3-stop temperature and panic ramps. A corrected take on the
+  `review/` module's `_lerp`. Pure/stdlib, 5 unit tests.
+
 ### EP-4 — LLM Backend Integration
 - **Provider/framework** — Groq + `openai/gpt-oss-120b` via **LangChain `ChatGroq`** behind the
   stdlib `LLMClient` interface. LangChain chosen (over a raw API call) for `with_structured_output`

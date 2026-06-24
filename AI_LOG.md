@@ -155,3 +155,11 @@ this file stays scoped to tooling, key prompts, and AI corrections to avoid dupl
   one shared by both nodes (classify wraps it via structured output), and added a lazy process-wide
   singleton `get_groq_client()` so model + graph build once per warm instance. Rate limiting is
   global within the instance; DI preserved via the `LLMClient` interface.
+
+## EP-3 — bubble colour engine
+
+- **Backend vs frontend split (discussed).** Bubble background colour = domain decision → computed
+  + stored server-side; readable text contrast → frontend (needs the painted/opacity-composited bg).
+- **3.1 colour primitives (done).** `colors.py`: `Color(r,g,b).to_hex()`, `clamp`, `lerp`,
+  `lerp_color` (clamped factor), multi-stop `ramp()`. Pure/stdlib; 5 unit tests; corrected `_lerp`
+  from `review/`.

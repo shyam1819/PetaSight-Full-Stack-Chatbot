@@ -59,9 +59,9 @@ UI
 - ✅ 2.7 [UI] Accessible login form wired to `/api/login` (loading + error states)
 - ✅ 2.8 [UI] Session-aware gating (authed→chat, logout control, 401 handling)
 
-### EP-3 — Bubble Color Engine ⬜
+### EP-3 — Bubble Color Engine 🔄
 Backend
-- ⬜ 3.1 [BE] Color primitives (RGB, clamp, lerp) — reuse the corrected `review/` logic
+- ✅ 3.1 [BE] Color primitives (RGB, clamp, lerp) — reuse the corrected `review/` logic
 - ⬜ 3.2 [BE] TemperatureRule: city+temp detection, clamped blue→purple→red
 - ⬜ 3.3 [BE] DecimalRule: standalone decimal, first two fractional digits → grayscale/sepia
 - ⬜ 3.4 [BE] PanicRule: LLM urgency → violet→magenta→pale yellow (needs EP-4)
