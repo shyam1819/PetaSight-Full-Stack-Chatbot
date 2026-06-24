@@ -26,18 +26,24 @@ A chatbot with a **live URL** (Vercel or anywhere) and a **public repo**.
 
 ### 3.1 Reply-bubble color rules (first match wins, checked in order)
 
-| # | Trigger | Color mapping |
-|---|---------|---------------|
-| 1 | A **city + a temperature in °C** | Deep blue → bright red by temperature: deep blue at **≤0°C**, light purple at **~15°C**, bright red at **≥35°C** |
-| 2 | Otherwise, a **standalone decimal number** | Grayscale or sepia ramp from the **first two decimal digits**: `.00` lightest → `.99` darkest |
-| 3 | Otherwise, **ask the LLM** how urgent/panicked it sounds | Violet (high panic) → magenta → pale yellow (completely calm) |
+| # | Trigger | Detection | Color mapping |
+|---|---------|-----------|---------------|
+| 1 | A **city + a temperature in °C** | Requires **both** a city *and* a temperature — a bare number is not case 1. Deterministic, parsed locally (no LLM). | 3-stop ramp **clamped** at the ends: deep blue at **≤0°C** → light purple at **~15°C** (midpoint anchor) → bright red at **≥35°C** |
+| 2 | Otherwise, a **standalone decimal number** | Uses the **first two fractional digits only**; the integer part is ignored (`42.37` → `.37`). Deterministic, parsed locally. | Grayscale or sepia ramp: `.00` lightest → `.99` darkest |
+| 3 | Otherwise, **panic/calm** | The **only** case that calls the LLM — it rates how urgent/panicked the message sounds. | Violet (high panic) → magenta → pale yellow (completely calm) |
+
+Notes on the mapping:
+- Case 1 is a **3-stop** gradient (blue → purple → red), not a 2-color blend, and is **clamped** outside 0–35°C.
+- The matched case alone sets the background; the readability layer (§4.1) then recomputes
+  **text** color on top of whatever background won.
 
 > ⚠️ **The deliberately underspecified part (the part they actually read for):** a single
 > message can satisfy more than one rule at once — e.g. *"Austin 21.5 we need to leave right
 > now"* is a city+temp, a standalone decimal, **and** panicked. "First match wins" is given,
 > but the ask is to **decide whether order alone is right, or whether one signal should win
 > for a reason** — pick an answer, build it, and justify it in `DECISIONS.md`. Do **not** ask
-> for clarification.
+> for clarification. (Note: `42.37` alone is **case 2** because it has no city; `"Austin 21.5"`
+> is **case 1** despite containing a decimal — that is the collision to reason about.)
 
 ## 4. Hard requirements (must-have)
 
@@ -62,7 +68,13 @@ A chatbot with a **live URL** (Vercel or anywhere) and a **public repo**.
 
 **Contrast as color shifts**
 - [ ] Text stays readable on **every** bubble background (target WCAG ≥ 4.5:1).
-- [ ] Text color is **derived from each bubble's background luminance** (e.g. black/white pick), not hardcoded.
+- [ ] Text color is **derived from each bubble's background luminance** (compute relative
+      luminance, pick the higher-contrast of black/white), not hardcoded. A single fixed text
+      color cannot satisfy all three ramps.
+- [ ] **Danger zones get dark text:** light purple (~15°C), pale yellow (calm), and the light
+      end of the decimal ramp (`.00`). Deep blue, violet, and the dark decimal end get light text.
+- [ ] Keep ramp endpoints/midtones **out of muddy mid-gray**, where neither black nor white
+      clears 4.5:1 — adjust the *background* if a swatch can't pass with either text color.
 
 **Focus management on new bubbles**
 - [ ] After sending, **focus stays in the message input** — never stolen by the incoming reply.
