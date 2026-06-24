@@ -163,3 +163,6 @@ this file stays scoped to tooling, key prompts, and AI corrections to avoid dupl
 - **3.1 colour primitives (done).** `colors.py`: `Color(r,g,b).to_hex()`, `clamp`, `lerp`,
   `lerp_color` (clamped factor), multi-stop `ramp()`. Pure/stdlib; 5 unit tests; corrected `_lerp`
   from `review/`.
+- **3.2 TemperatureRule (done).** `temperature_color(°C)` via `ramp` over deep-blue/light-purple/
+  bright-red stops (review/ anchors); `temperature_rule` needs both city + temp. Uniform
+  `(message, analysis) -> Color | None` signature for the chain. 4 unit tests.

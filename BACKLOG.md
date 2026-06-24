@@ -62,7 +62,7 @@ UI
 ### EP-3 — Bubble Color Engine 🔄
 Backend
 - ✅ 3.1 [BE] Color primitives (RGB, clamp, lerp) — reuse the corrected `review/` logic
-- ⬜ 3.2 [BE] TemperatureRule: city+temp detection, clamped blue→purple→red
+- ✅ 3.2 [BE] TemperatureRule: city+temp detection, clamped blue→purple→red
 - ⬜ 3.3 [BE] DecimalRule: standalone decimal, first two fractional digits → grayscale/sepia
 - ⬜ 3.4 [BE] PanicRule: LLM urgency → violet→magenta→pale yellow (needs EP-4)
 - ⬜ 3.5 [BE] Resolver (first-match-wins chain) + finalize collision decision (DECISIONS D2)

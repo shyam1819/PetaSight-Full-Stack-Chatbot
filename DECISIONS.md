@@ -176,6 +176,11 @@ decisions get appended under their epic as we complete them.
   form), plus pure `clamp`, `lerp`, `lerp_color` (interpolation factor clamped), and a multi-stop
   `ramp(stops, t)` that backs the 3-stop temperature and panic ramps. A corrected take on the
   `review/` module's `_lerp`. Pure/stdlib, 5 unit tests.
+- **3.2 TemperatureRule** — `temperature_color(°C)` = `ramp` over stops `[(0, deep blue),
+  (15, light purple), (35, bright red)]` (keyed directly on °C, so clamping + the two-segment
+  interpolation are free); anchors reused from the `review/` module. `temperature_rule` applies
+  only when **both** `city` and `temperature_c` are present (LLM-detected). Uniform rule signature
+  `(message, analysis) -> Color | None` for the resolver chain. 4 unit tests.
 
 ### EP-4 — LLM Backend Integration
 - **Provider/framework** — Groq + `openai/gpt-oss-120b` via **LangChain `ChatGroq`** behind the
