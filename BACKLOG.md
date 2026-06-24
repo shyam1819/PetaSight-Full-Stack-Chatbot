@@ -48,7 +48,7 @@ Each story tagged by layer: **[BE]** backend · **[UI]** frontend · **[Infra]**
 
 ### EP-2 — Authentication & Access Control 🔄
 Backend
-- ⬜ 2.1 [BE] PBKDF2-HMAC-SHA256 password hashing module (per-user salt, high iterations)
+- ✅ 2.1 [BE] PBKDF2-HMAC-SHA256 password hashing module (per-user salt, high iterations)
 - ⬜ 2.2 [BE] HMAC signed-session token (sign/verify) + HttpOnly/Secure/SameSite cookie helpers; `SESSION_SECRET`
 - ⬜ 2.3 [BE] User repository (find / create by email)
 - ⬜ 2.4 [BE] Auth service: `@petasight.com` gate + trust-on-first-use + wrong-password rejection

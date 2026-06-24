@@ -90,3 +90,7 @@ this file stays scoped to tooling, key prompts, and AI corrections to avoid dupl
 - **3.1 import de-risk (done).** Probed how Vercel resolves shared modules. Found: the whole
   `api/` tree is bundled, but bare `from _core...` fails at top level — `from api._core.<m> import
   …` works (cwd `/var/task` on sys.path). Locked that convention; removed the probe.
+- **2.1 PBKDF2 hashing (done).** Stdlib PBKDF2-HMAC-SHA256, per-password salt, self-describing
+  stored format, constant-time verify; 6 unit tests pass. Walked the login data-flow and the
+  logout/stateless-revocation tradeoff → recorded as THREATS T1; flagged for final review in
+  REVIEW.md.
