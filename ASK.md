@@ -105,7 +105,8 @@ Notes on the mapping:
 | `THREATS.md` | How one signed-in user could reach another's messages via the API, the defense (built or proposed), and **why you're convinced it holds**. Write it even if isolation was only partially built. |
 | `REVIEW.md` | The `review/` folder ships a small module + test with **a few bugs**. State what's broken, why, and how you'd fix it. |
 
-> Note: the `review/` folder is referenced by the brief but **not yet present** in this repo.
+> Note: the `review/` module is provided at [`public/review/`](public/review/) and is **Python**
+> (`bubble_service.py` + `test_bubble_service.py`) — this is the target for `REVIEW.md`.
 
 > **Process gate:** these deliverables must be kept current as work happens. Every commit and
 > every "done" feature must pass [DEFINITION_OF_DONE.md](DEFINITION_OF_DONE.md) first.

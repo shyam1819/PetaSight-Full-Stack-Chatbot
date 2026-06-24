@@ -28,6 +28,9 @@ to correct. Kept current as work happens (see [DEFINITION_OF_DONE.md](DEFINITION
 - **Documented approach too early.** First Phase 1 write-up recorded our *solution* (the collision
   call, per-bubble computed text color) in the features section. Corrected to spec-only —
   features capture what the ASK requires; our approach is recorded in the phase where we decide it.
+- **Missed the provided starter code.** Claimed the `review/` folder wasn't in the repo. It is —
+  `public/review/` ships Python (`bubble_service.py` + its test). Corrected; this also signals the
+  expected stack leans Python, which feeds the Phase 2 backend decision.
 
 ## Where decisions live
 
