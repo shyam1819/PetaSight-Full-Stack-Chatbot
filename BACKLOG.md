@@ -37,4 +37,72 @@ Status legend: ✅ done · 🔄 in progress · ⬜ todo
 
 ## Stories
 
-_To be defined per epic (next step)._
+Each story tagged by layer: **[BE]** backend · **[UI]** frontend · **[Infra]** · **[Docs]**.
+
+### EP-1 — Deployment & Infrastructure ✅
+- ✅ 1.1 [Infra] CI/CD: Vercel + GitHub Actions (dev→Preview, main→Prod), gated on build + py-compile
+- ✅ 1.2 [BE] Health endpoint + minimal login slice proving frontend↔`/api` same-origin
+- ✅ 1.3 [Infra] Provision Neon Postgres; wire pooled (runtime) + unpooled (DDL) creds via Vercel env
+- ✅ 1.4 [BE] Schema (users/conversations/messages) + `db_health` connectivity check
+- ✅ 1.5 [BE] Lock shared-module import convention (`api/_core`, `from api._core...`)
+
+### EP-2 — Authentication & Access Control 🔄
+Backend
+- ⬜ 2.1 [BE] PBKDF2-HMAC-SHA256 password hashing module (per-user salt, high iterations)
+- ⬜ 2.2 [BE] HMAC signed-session token (sign/verify) + HttpOnly/Secure/SameSite cookie helpers; `SESSION_SECRET`
+- ⬜ 2.3 [BE] User repository (find / create by email)
+- ⬜ 2.4 [BE] Auth service: `@petasight.com` gate + trust-on-first-use + wrong-password rejection
+- ⬜ 2.5 [BE] Endpoints: `POST /api/login`, `POST /api/logout`, `GET /api/me`
+- ⬜ 2.6 [BE] Require-auth guard: server-established `user_id` for protected routes
+
+UI
+- ⬜ 2.7 [UI] Accessible login form wired to `/api/login` (loading + error states)
+- ⬜ 2.8 [UI] Session-aware gating (authed→chat, logout control, 401 handling)
+
+### EP-3 — Bubble Color Engine ⬜
+Backend
+- ⬜ 3.1 [BE] Color primitives (RGB, clamp, lerp) — reuse the corrected `review/` logic
+- ⬜ 3.2 [BE] TemperatureRule: city+temp detection, clamped blue→purple→red
+- ⬜ 3.3 [BE] DecimalRule: standalone decimal, first two fractional digits → grayscale/sepia
+- ⬜ 3.4 [BE] PanicRule: LLM urgency → violet→magenta→pale yellow (needs EP-4)
+- ⬜ 3.5 [BE] Resolver (first-match-wins chain) + finalize collision decision (DECISIONS D2)
+- ⬜ 3.6 [BE] Attach computed color to the reply, persist `bubble_color`
+
+UI
+- ⬜ 3.7 [UI] Apply the returned background color to reply bubbles
+
+### EP-4 — LLM Backend Integration ⬜
+Backend
+- ⬜ 4.1 [BE] `LLMClient` interface + select provider (from the temp key) + API key env
+- ⬜ 4.2 [BE] Concrete client impl: timeouts, error handling
+- ⬜ 4.3 [BE] Urgency/panic classification (→ 0..1 score) consumed by PanicRule
+- ⬜ 4.4 [BE] Assistant reply generation
+- ⬜ 4.5 [BE] (Bonus) RTL philosopher persona reply: original script + English translation
+
+### EP-5 — Conversations, History & User Isolation ⬜
+Backend
+- ⬜ 5.1 [BE] Conversation repository (create, list by `user_id`)
+- ⬜ 5.2 [BE] Message repository (insert, fetch history) — every query filtered by `user_id`
+- ⬜ 5.3 [BE] Chat service: send → persist user msg → color → LLM reply → persist
+- ⬜ 5.4 [BE] Endpoints: list/create conversations, get history, send message (auth-guarded)
+- ⬜ 5.5 [BE] Per-user isolation enforcement: ownership checks, identity from session not client (stretch)
+
+UI
+- ⬜ 5.6 [UI] Conversations list (view, select, create new)
+- ⬜ 5.7 [UI] Message thread (load history, render user/assistant bubbles)
+- ⬜ 5.8 [UI] Send-message flow integrated with the backend
+
+### EP-6 — Frontend Experience & Accessibility ⬜
+UI
+- ⬜ 6.1 [UI] App shell + login↔chat navigation (auth-aware)
+- ⬜ 6.2 [UI] Chat layout (thread + composer)
+- ⬜ 6.3 [UI] Keyboard operability (tab order, visible focus rings, Enter-to-send)
+- ⬜ 6.4 [UI] Focus management: focus stays in input on new reply (no yank)
+- ⬜ 6.5 [UI] `aria-live="polite"` thread announcements
+- ⬜ 6.6 [UI] Per-bubble readable text contrast (luminance-based; account for opacity composite)
+- ⬜ 6.7 [UI] Aesthetics: chat background + bubble opacity (the deferred styling)
+
+### EP-7 — Security Threat Model & Code Review ⬜
+- ⬜ 7.1 [Docs] THREATS.md — isolation attack/defense and why it holds
+- ⬜ 7.2 [Docs] REVIEW.md — review the provided `review/` module (bugs + fixes)
+- ⬜ 7.3 [BE] Harden/lock any isolation or exposed-endpoint gaps found
