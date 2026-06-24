@@ -5,18 +5,28 @@ Kept current as work happens. Pending phases are listed but empty until we reach
 
 ## Phase 1 — Features
 
-- **Case 1 needs both a city and a temperature** — a bare number isn't case 1; it falls to case 2.
-- **Case 1 is a clamped 3-stop ramp** (blue ≤0°C → purple ~15°C → red ≥35°C) — the purple
-  midpoint is a real anchor, not a blue→red blend.
-- **Case 2 uses only the first two fractional digits** (`42.37` → `.37`) — integer part is ignored.
-- **Only case 3 calls the LLM; cases 1–2 are parsed locally** — keeps the deterministic paths
-  testable and cheap, reserves the model for the genuinely fuzzy signal.
-- **Text color is computed per bubble from background luminance, never fixed** — no single text
-  color clears WCAG 4.5:1 across all three ramps; verified contrast across every swatch.
-- **Collision call (the graded one): panic wins on genuine overlap** — when a message is city+temp
-  *and* reads as urgent (e.g. "Austin 21.5 we need to leave right now"), color the thing that
-  matters to a human, not the first regex hit. Exact override condition finalized when the matcher
-  is built. (`42.37` → case 2; `"Austin 21.5"` → case 1 — settled by the rules above.)
+The 4 concrete asks, as specified in [ASK.md](ASK.md). What the ASK requires only — our
+solution approach is recorded later, in the phase where we decide it.
+
+### Feature 1 — Reply-bubble color
+- Background color of each reply bubble depends on the user's message; **first match wins**,
+  rules checked in order.
+- Rule 1 — city + temperature (°C): deep blue ≤0 → light purple ~15 → bright red ≥35.
+- Rule 2 — standalone decimal: grayscale/sepia from the first two decimal digits, `.00`
+  lightest → `.99` darkest.
+- Rule 3 — ask the LLM how urgent/panicked it sounds: violet → magenta → pale yellow.
+- A message can match more than one rule. The ASK **requires a documented decision** on which
+  signal wins (not order alone). _Decision pending — to be made when the matcher is built._
+
+### Feature 2 — Real LLM backend
+- Replies come from a real LLM on the backend, not canned responses.
+
+### Feature 3 — Keyboard, readability, focus
+- Works with a keyboard; text stays readable as the background color shifts.
+- When a reply appends, a keyboard user must not lose their place or get yanked around.
+
+### Feature 4 — Sign-in restricted to @petasight.com
+- Only `@petasight.com` emails get in, **enforced at the backend endpoint**, not just the login page.
 
 ## Phase 2 — Architecture (frontend / backend)
 

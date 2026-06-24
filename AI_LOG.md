@@ -14,8 +14,8 @@ to correct. Kept current as work happens (see [DEFINITION_OF_DONE.md](DEFINITION
   `public/brief.pdf`.
 - "Make a mandatory prerequisite list before any commits / feature completion" → produced
   [DEFINITION_OF_DONE.md](DEFINITION_OF_DONE.md), the deliverable-update gate.
-- "Understand the bubble colour and its readability" → drove the precision in
-  [DECISIONS.md](DECISIONS.md) D1/D3 and a contrast check across all three ramps.
+- "Understand the bubble colour and its readability" → drove a contrast check across all three
+  ramps and the feature wording in [DECISIONS.md](DECISIONS.md) Phase 1.
 
 ## Places the AI got it wrong (corrected)
 
