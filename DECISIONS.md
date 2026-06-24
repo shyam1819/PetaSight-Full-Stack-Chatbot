@@ -312,6 +312,13 @@ decisions get appended under their epic as we complete them.
   message is `scrollIntoView`'d (scroll only — not focus); visible focus rings throughout; labelled
   input. "A keyboard user should not lose their place when a reply arrives" is satisfied by
   construction.
+- **Reply uses conversation history (server-pulled).** `send_message` pulls THIS conversation's prior
+  turns via `list_for_conversation(conversation_id, user_id)` (user-scoped, capped to 20) and passes
+  them to the LLM **reply** node. History is **pulled server-side, never sent by the client** —
+  trusting client-supplied history would let a user fabricate/splice context and would risk crossing
+  conversations; server-pull keeps it consistent with T3 isolation. The **classify** node still sees
+  only the current message, so the **bubble colour stays per-message-in-isolation** (Feature 1
+  preserved). Verified live (multi-turn name recall).
 
 ## Phase 5 — Deployment
 
