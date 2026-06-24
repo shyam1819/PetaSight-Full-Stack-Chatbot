@@ -90,7 +90,7 @@ Backend
 - ✅ 5.5 [BE] Per-user isolation enforcement: ownership checks, identity from session not client (stretch) — THREATS T3
 
 UI
-- ⬜ 5.6 [UI] Conversations list (view, select, create new)
+- ✅ 5.6 [UI] Conversations list (view, select, create new)
 - ⬜ 5.7 [UI] Message thread (load history, render user/assistant bubbles)
 - ⬜ 5.8 [UI] Send-message flow integrated with the backend
 

@@ -207,3 +207,6 @@ this file stays scoped to tooling, key prompts, and AI corrections to avoid dupl
 - **5.5 isolation + THREATS (done).** Enforcement already shipped (5.1–5.4); wrote THREATS T3 — the
   per-user isolation threat model (IDOR / identity-injection / cookie-forgery → defenses → live +
   test verification → residual risk). Stretch goal met and proven.
+- **5.6 conversations list UI (done).** `ConversationList` sidebar (view/select/create) wired to
+  `/api/conversations`; accessible (nav, aria-current, role=status). Two-pane signed-in shell. Build
+  green.

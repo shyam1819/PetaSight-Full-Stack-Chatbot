@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import LoginForm from './components/LoginForm'
+import ConversationList from './components/ConversationList'
 import { getMe, logout, type AuthUser } from './api/auth'
 
 type State =
@@ -12,6 +13,7 @@ type State =
 // The chat screen itself lands in EP-3/EP-5/EP-6.
 export default function App() {
   const [state, setState] = useState<State>({ phase: 'loading' })
+  const [selectedId, setSelectedId] = useState<number | null>(null)
 
   useEffect(() => {
     let active = true
@@ -25,6 +27,7 @@ export default function App() {
 
   async function handleLogout() {
     await logout()
+    setSelectedId(null)
     setState({ phase: 'anon' })
   }
 
@@ -53,12 +56,20 @@ export default function App() {
           </button>
         </div>
       </header>
-      <main className="app__main">
-        <p className="app__placeholder">
-          You're signed in. The chat screen arrives with the bubble engine and conversations
-          (EP-3 / EP-5 / EP-6).
-        </p>
-      </main>
+      <div className="app__body">
+        <aside className="app__sidebar">
+          <ConversationList selectedId={selectedId} onSelect={setSelectedId} />
+        </aside>
+        <main className="app__main">
+          {selectedId === null ? (
+            <p className="app__placeholder">Select a conversation, or create a new one.</p>
+          ) : (
+            <p className="app__placeholder">
+              Conversation {selectedId} — the message thread arrives in story 5.7.
+            </p>
+          )}
+        </main>
+      </div>
     </div>
   )
 }

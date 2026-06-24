@@ -295,6 +295,10 @@ decisions get appended under their epic as we complete them.
   (`user_id` from the verified cookie only; ownership-scoped queries; messages denormalize `user_id`
   for defense in depth). Documented as **THREATS T3** — the IDOR / identity-injection / cookie-forgery
   attacks, the defenses, and the live + test verification. No gaps found; the stretch goal is met.
+- **5.6 Conversations list UI** — `ConversationList` sidebar wired to `/api/conversations` via a typed
+  chat client; view / select / create-new. Accessible: `nav` landmark with `aria-label`,
+  `aria-current` on the selected item, keyboard-operable buttons, `role="status"` loading. Integrated
+  into the signed-in shell as a two-pane layout; `selectedId` state, reset on logout.
 
 ## Phase 5 — Deployment
 
