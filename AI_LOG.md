@@ -84,3 +84,9 @@ this file stays scoped to tooling, key prompts, and AI corrections to avoid dupl
 - Verified live on the deployed function: `/api/db_health` → 200 `{"db":"ok","via":
   "petasight_postgres_DATABASE_URL","expected_tables":3}`. psycopg installs fine in the Vercel
   build; runtime connects via the pooled URL.
+
+## Task 3 — stateless backend (in progress)
+
+- **3.1 import de-risk (done).** Probed how Vercel resolves shared modules. Found: the whole
+  `api/` tree is bundled, but bare `from _core...` fails at top level — `from api._core.<m> import
+  …` works (cwd `/var/task` on sys.path). Locked that convention; removed the probe.

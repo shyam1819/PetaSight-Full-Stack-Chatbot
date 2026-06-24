@@ -94,7 +94,11 @@ frontend · Neon Postgres store · one repo, same origin. No Redis/cache server.
 
 ## Phase 4 — Code development
 
-_Pending._
+- **Shared backend code under `api/_<pkg>/`, imported package-style** —
+  `from api._core.<module> import <name>`. Verified on Vercel: the whole `api/` tree is bundled,
+  cwd `/var/task` is on `sys.path` so `api.` resolves; a bare `from _core...` does **not** work at
+  top level. Underscore-prefixed dirs (`_core`, `_services`, …) aren't treated as routes. This
+  keeps the layered (handler → service → repository) design without per-handler `sys.path` hacks.
 
 ## Phase 5 — Deployment
 
