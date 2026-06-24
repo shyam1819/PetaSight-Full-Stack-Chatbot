@@ -172,13 +172,18 @@ decisions get appended under their epic as we complete them.
   ergonomics, accepting the heavier cold start; it's isolated in `groq_client.py` so the rest of
   the app and tests depend only on the interface + a stdlib `MessageAnalysis` dataclass.
   `GROQ_API_KEY` lives in Vercel env (temporary eval key, Feature 2).
-- **"Parallel agent" — LLM classifies, code decides.** One structured `analyze()` call returns the
-  reply + signals for all three conditions (`city`, `temperature_c`, `decimal_value`, `panic`) in a
-  single inference. The LLM classifies (city/temp/panic genuinely need understanding; it also
-  reports the decimal), but **code stays authoritative**: it re-validates the decimal with a regex
-  (regex wins on disagreement) and owns the rule precedence + collision decision (EP-3). Colour
-  rules remain pure functions fed by signals. Rationale: rule 1 (city) needs world knowledge, but
-  rule 2 (decimal) is exact form where regex is strictly safer — so code guards the decimal.
+- **Call architecture — two parallel calls via LangGraph fan-out.** `analyze()` runs a focused chat
+  `reply` node and a structured `classify` node concurrently (both branch from `START` in one
+  super-step, then join) and waits for both — so reply + signals are produced simultaneously. Chosen
+  over a single unified call for separation of concerns / per-node prompts+temperatures (reply at
+  0.5, classifier at 0.0), accepting **2× LLM calls** and the `langgraph` dependency weight. The
+  `LLMClient` interface is unchanged, so the rest of the app is unaffected.
+- **LLM classifies, code decides.** The `classify` node returns signals for all three conditions
+  (`city`, `temperature_c`, `decimal_value`, `panic`); the LLM classifies (city/temp/panic need
+  understanding; it also reports the decimal), but **code stays authoritative** — it re-validates
+  the decimal with a regex (regex wins on disagreement) and owns the rule precedence + collision
+  (EP-3). Colour rules stay pure functions fed by signals. Rationale: rule 1 (city) needs world
+  knowledge, but rule 2 (decimal) is exact form where regex is strictly safer.
 - **4.3 Rate limiting — LangChain `InMemoryRateLimiter` (per-instance, not global).** Attach an
   `InMemoryRateLimiter` to `ChatGroq` to pace LLM calls — stay under Groq's limits and bound
   cost/abuse. **Acknowledged limitation: this is NOT global rate limiting.** The limiter lives in
@@ -186,6 +191,13 @@ decisions get appended under their epic as we complete them.
   Vercel instances can collectively exceed the intended rate. True global throttling would need a
   **shared store** (e.g. Redis/Upstash), which we deliberately excluded (no Redis). Accepted for
   this scope as a known limitation; a production deployment would move to a shared-store limiter.
+- **Persist the colour decision; never recompute on read.** When a message is sent, the computed
+  `bubble_color` (plus provenance: matched rule + the signals) is stored on the assistant message
+  row. History loads read the stored colour — **no recomputation, no LLM replay**. Three reasons:
+  (1) cost/latency — recomputing every historical message per load is absurd; (2) the `GROQ_API_KEY`
+  is revoked after ~1 week (Feature 2), so recomputation would *fail* on old messages — stored
+  colours keep history rendering; (3) the LLM is non-deterministic, so recomputing could change an
+  old bubble's colour — stored = stable. (Implemented in EP-5's chat flow.)
 - **Panic representation — 3-level ordinal category, not a float.** The LLM returns
   `panic ∈ {calm, neutral, panicked}` (a constrained enum in the structured schema); code maps it
   to the violet→magenta→yellow ramp: calm → pale yellow, neutral → magenta, panicked → violet.

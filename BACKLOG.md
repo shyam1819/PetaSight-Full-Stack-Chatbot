@@ -77,7 +77,7 @@ One structured "analyze" call returns reply + all 3 signals (LLM classifies; cod
 decimal and owns the resolver).
 Backend
 - ✅ 4.1 [BE] `LLMClient` interface (stdlib) + `GroqLLMClient` (LangChain `ChatGroq`); deps + `GROQ_API_KEY` env
-- ✅ 4.2 [BE] Structured "analyze" agent: one call → reply + {city, temperature_c, decimal, panic}; live-verified
+- ✅ 4.2 [BE] "analyze" agent — LangGraph fan-out: parallel reply + classify (signals: city, temperature_c, decimal, panic); live-verified
 - ⬜ 4.3 [BE] Rate limiting on the Groq client via LangChain `InMemoryRateLimiter` (paces LLM calls / stays under Groq limits; per-instance in serverless — global would need a shared store)
 - ⬜ 4.4 [BE] (Bonus) RTL philosopher persona reply: original script + English translation
 
