@@ -23,6 +23,22 @@ Walk [DEFINITION_OF_DONE.md](DEFINITION_OF_DONE.md) first. In short:
 - Before committing: confirm deliverables are current, the change was **actually tested**,
   scope is clean (no `.DS_Store`), and the commit message is honest about what changed.
 
+## Build phases (follow in order)
+
+Work through the project in this sequence; don't jump ahead. Record every decision under its
+phase in [DECISIONS.md](DECISIONS.md).
+
+1. **Features** — color rules, readability, the collision call.
+2. **Architecture** — frontend and backend shape, framework, auth flow.
+3. **Temporary store** — where messages/identity live (the per-user isolation store).
+4. **Code development** — implement against the locked decisions.
+5. **Deployment** — live URL (Vercel), env/secrets.
+
+## Documents
+
+Keep docs simple and short — concise entries over prose. `DECISIONS.md` uses `Decision — Why`
+bullets grouped by phase. Don't pad a doc to look thorough.
+
 ## Project conventions
 
 - Commit/push only when the user asks.
