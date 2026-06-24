@@ -71,13 +71,14 @@ Backend
 UI
 - ⬜ 3.7 [UI] Apply the returned background color to reply bubbles
 
-### EP-4 — LLM Backend Integration ⬜
+### EP-4 — LLM Backend Integration 🔄
+Decision: Groq + `openai/gpt-oss-120b` via LangChain `ChatGroq`, behind the `LLMClient` interface.
+One structured "analyze" call returns reply + all 3 signals (LLM classifies; code validates the
+decimal and owns the resolver).
 Backend
-- ⬜ 4.1 [BE] `LLMClient` interface + select provider (from the temp key) + API key env
-- ⬜ 4.2 [BE] Concrete client impl: timeouts, error handling
-- ⬜ 4.3 [BE] Urgency/panic classification (→ 0..1 score) consumed by PanicRule
-- ⬜ 4.4 [BE] Assistant reply generation
-- ⬜ 4.5 [BE] (Bonus) RTL philosopher persona reply: original script + English translation
+- ✅ 4.1 [BE] `LLMClient` interface (stdlib) + `GroqLLMClient` (LangChain `ChatGroq`); deps + `GROQ_API_KEY` env
+- ⬜ 4.2 [BE] Structured "analyze" agent: one call → reply + {city, temperature_c, decimal, panic}; live-verified
+- ⬜ 4.3 [BE] (Bonus) RTL philosopher persona reply: original script + English translation
 
 ### EP-5 — Conversations, History & User Isolation ⬜
 Backend

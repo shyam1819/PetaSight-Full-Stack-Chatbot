@@ -1,2 +1,4 @@
 # Python serverless dependencies for the api/ functions.
 psycopg[binary]
+langchain-groq
+pydantic

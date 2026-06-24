@@ -166,6 +166,20 @@ decisions get appended under their epic as we complete them.
   state). Loading announced via `role="status" aria-live`. Completes the EP-2 frontend; the chat
   screen itself is deferred to EP-3/EP-5/EP-6.
 
+### EP-4 — LLM Backend Integration
+- **Provider/framework** — Groq + `openai/gpt-oss-120b` via **LangChain `ChatGroq`** behind the
+  stdlib `LLMClient` interface. LangChain chosen (over a raw API call) for `with_structured_output`
+  ergonomics, accepting the heavier cold start; it's isolated in `groq_client.py` so the rest of
+  the app and tests depend only on the interface + a stdlib `MessageAnalysis` dataclass.
+  `GROQ_API_KEY` lives in Vercel env (temporary eval key, Feature 2).
+- **"Parallel agent" — LLM classifies, code decides.** One structured `analyze()` call returns the
+  reply + signals for all three conditions (`city`, `temperature_c`, `decimal_value`, `panic`) in a
+  single inference. The LLM classifies (city/temp/panic genuinely need understanding; it also
+  reports the decimal), but **code stays authoritative**: it re-validates the decimal with a regex
+  (regex wins on disagreement) and owns the rule precedence + collision decision (EP-3). Colour
+  rules remain pure functions fed by signals. Rationale: rule 1 (city) needs world knowledge, but
+  rule 2 (decimal) is exact form where regex is strictly safer — so code guards the decimal.
+
 ## Phase 5 — Deployment
 
 - **CI/CD via GitHub Actions** (`.github/workflows/deploy.yml`), not Vercel's native Git

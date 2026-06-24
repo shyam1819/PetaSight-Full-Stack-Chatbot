@@ -123,3 +123,13 @@ this file stays scoped to tooling, key prompts, and AI corrections to avoid dupl
   are correct and the login→me round-trip works via curl; the cause was a new immutable Preview URL
   per push (CLI deploys give no branch alias) + host-only cookie. Fixed with a stable alias
   (`petasight-chat-dev.vercel.app`) re-pointed by the deploy workflow.
+
+## EP-4 — LLM integration
+
+- **Decisions.** User chose **LangChain** (over a raw call) and to let the **LLM classify** all 3
+  signals. Settled the nuance: rule 1 (city) needs world knowledge → LLM; rule 2 (decimal) is exact
+  form → regex is safer, so code re-validates the decimal and owns the resolver/collision.
+- **4.1 llm client (done).** `LLMClient` interface + stdlib `MessageAnalysis` dataclass +
+  `GroqLLMClient` (LangChain `ChatGroq`, `openai/gpt-oss-120b`, `with_structured_output`). LangChain
+  isolated in `groq_client.py`. Unit-tested the interface with a fake (no LangChain); added
+  `langchain-groq`/`pydantic`. Live `analyze` deferred to 4.2 (needs `GROQ_API_KEY`).
