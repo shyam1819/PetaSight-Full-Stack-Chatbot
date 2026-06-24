@@ -13,6 +13,7 @@ from api._core.bubble_rules import (
     extract_standalone_decimal,
     panic_color,
     panic_rule,
+    resolve_bubble_color,
     temperature_color,
     temperature_rule,
 )
@@ -86,6 +87,39 @@ def test_panic_rule_always_matches():
     assert panic_rule("anything", _analysis(panic="panicked")) == PANIC_VIOLET
     assert panic_rule("anything", _analysis(panic="neutral")) == PANIC_MAGENTA
     assert panic_rule("anything", _analysis(panic="calm")) == PANIC_PALE_YELLOW
+
+
+def test_resolver_temperature_wins_when_temp_present():
+    # With a unit the LLM populates temperature_c → rule 1 wins over decimal AND panic.
+    out = resolve_bubble_color(
+        "Austin 21.5°C we need to leave right now",
+        _analysis(city="Austin", temperature_c=21.5, decimal_value="21.5", panic="panicked"),
+    )
+    assert out.rule == "temperature"
+    assert out.color == temperature_color(21.5)
+
+
+def test_resolver_bare_number_with_city_is_decimal():
+    # No unit → temperature_c stays null → falls through to decimal (first-match over panic).
+    out = resolve_bubble_color(
+        "Austin 21.5 we need to leave right now",
+        _analysis(city="Austin", temperature_c=None, decimal_value="21.5", panic="panicked"),
+    )
+    assert out.rule == "decimal"
+    assert out.color == decimal_color(50)  # ".5" -> "50"
+
+
+def test_resolver_falls_through_to_decimal():
+    # no city → not temperature; standalone decimal → decimal wins.
+    out = resolve_bubble_color("the total came to 42.37", _analysis(panic="neutral"))
+    assert out.rule == "decimal"
+    assert out.color == decimal_color(37)
+
+
+def test_resolver_falls_through_to_panic():
+    out = resolve_bubble_color("just checking in, all good", _analysis(panic="calm"))
+    assert out.rule == "panic"
+    assert out.color == PANIC_PALE_YELLOW
 
 
 def _run():

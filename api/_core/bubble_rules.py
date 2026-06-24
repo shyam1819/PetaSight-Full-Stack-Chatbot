@@ -9,6 +9,7 @@ Anchors reuse the provided review/ module's temperature colours.
 from __future__ import annotations
 
 import re
+from dataclasses import dataclass
 
 from api._core.colors import Color, lerp_color, ramp
 from api._core.llm import MessageAnalysis
@@ -92,3 +93,29 @@ def panic_color(level: str) -> Color:
 def panic_rule(message: str, analysis: MessageAnalysis) -> Color:
     """Rule 3: the fallback — always matches, colouring by the LLM's panic category."""
     return panic_color(analysis.panic)
+
+
+# Resolver — strict first-match-wins in the brief's order (temperature → decimal → panic). The
+# collision is resolved by honouring the explicit spec order, not by a signal override (see
+# DECISIONS Feature 1 / EP-3). Each entry is (rule_name, rule_fn) so we can record provenance.
+_RULES = (
+    ("temperature", temperature_rule),
+    ("decimal", decimal_rule),
+    ("panic", panic_rule),
+)
+
+
+@dataclass(frozen=True)
+class BubbleColor:
+    color: Color
+    rule: str  # which rule won — stored as provenance alongside the colour
+
+
+def resolve_bubble_color(message: str, analysis: MessageAnalysis) -> BubbleColor:
+    """Decide the reply bubble's colour: first rule that matches wins."""
+    for name, rule in _RULES:
+        color = rule(message, analysis)
+        if color is not None:
+            return BubbleColor(color=color, rule=name)
+    # Unreachable (panic_rule always matches), but keeps the return type total.
+    return BubbleColor(color=panic_color(analysis.panic), rule="panic")

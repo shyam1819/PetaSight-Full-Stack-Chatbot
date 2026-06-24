@@ -37,7 +37,9 @@ REPLY_SYSTEM = "You are PetaSight's chat assistant. Write a concise, helpful rep
 CLASSIFY_SYSTEM = (
     "Extract signals from the user's message (THIS message only):\n"
     "- city: a city named in the message, else null;\n"
-    "- temperature_c: a temperature in Celsius tied to that city, else null;\n"
+    "- temperature_c: a temperature in Celsius — ONLY if the message gives the number with a unit "
+    "(°C, C, 'degrees', 'Celsius') or explicitly describes it as a temperature. A bare number next "
+    "to a city (e.g. 'Austin 21.5') is NOT a temperature → null;\n"
     "- decimal_value: a standalone decimal number exactly as written (e.g. '42.37'), else null;\n"
     "- panic: classify how the message feels as exactly one of 'calm', 'neutral', or 'panicked'.\n"
     "Use null when a signal is absent. Do not invent values."
