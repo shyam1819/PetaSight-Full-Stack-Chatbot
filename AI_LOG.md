@@ -56,5 +56,14 @@ Stage 2 — lock the development phases (Phase 2–3)
 Design/judgment decisions are logged in [DECISIONS.md](DECISIONS.md) by build phase, not here —
 this file stays scoped to tooling, key prompts, and AI corrections to avoid duplicating it.
 
-> No application code has been written yet, so there are no code-level AI mistakes to report.
-> This section will grow as implementation starts.
+- **tsconfig composite mismatch (Task 1).** Scaffolded a referenced `tsconfig.node.json`; `npm run
+  build` failed (TS6306/TS6310/TS5096) and the composite project emitted stray `vite.config.js` /
+  `.tsbuildinfo` files into the repo. Simplified to a single non-composite `tsconfig.json` +
+  `tsc && vite build`. Caught by running the build and inspecting git status, not trusting the
+  scaffold.
+
+## Task 1 — deploy pipeline (in progress)
+
+- Scaffolded a minimal Vite + React (TS) login page + Python `api/health.py` and `api/login.py`
+  (domain-gated stub, no DB) to prove the deploy + frontend↔`/api` integration. Verified locally:
+  `npm run build` passes and Python compiles. Deployment to Vercel is the user's step.

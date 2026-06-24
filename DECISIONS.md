@@ -87,4 +87,10 @@ _Pending._
 
 ## Phase 5 — Deployment
 
-_Pending._
+- **CI/CD via GitHub Actions** (`.github/workflows/deploy.yml`), not Vercel's native Git
+  integration — keeps deploys gated behind our own checks (frontend build + Python compile)
+  before shipping, matching the Definition-of-Done "test before deploy" rule.
+- **Branch strategy:** push to `dev` → Vercel **Preview** deploy (shareable test URL); push to
+  `main` → **Production**. Work happens on `dev`; `main` stays releasable.
+- Deploy uses the Vercel CLI with `VERCEL_TOKEN` / `VERCEL_ORG_ID` / `VERCEL_PROJECT_ID` stored as
+  GitHub Actions secrets (set once by the repo owner).
