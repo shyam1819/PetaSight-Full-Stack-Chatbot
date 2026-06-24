@@ -175,6 +175,11 @@ decisions get appended under their epic as we complete them.
   `main` → **Production**. Work happens on `dev`; `main` stays releasable.
 - Deploy uses the Vercel CLI with `VERCEL_TOKEN` / `VERCEL_ORG_ID` / `VERCEL_PROJECT_ID` stored as
   GitHub Actions secrets (set once by the repo owner).
+- **Stable dev URL via alias** — CLI deploys (vs Vercel's native Git integration) produce a new
+  immutable URL per push and **no** `-git-dev-` branch alias, so the host-only session cookie
+  appeared "lost" when testing across deploys. Fix: the workflow re-points a stable alias
+  (`petasight-chat-dev.vercel.app`) at each dev deployment, so login persists across refresh and
+  redeploys. (Production gets its stable domain from `--prod` on main.)
 - **Build happens in Vercel's cloud, not prebuilt in CI** — the Python builder uses `uv`, which
   isn't on the CI runner (or a local machine), so `vercel build`/`--prebuilt` fails with
   `spawn uv ENOENT`. Using plain `vercel deploy` lets Vercel build server-side where `uv` exists;

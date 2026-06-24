@@ -41,4 +41,13 @@ jobs:
         run: npm install -g vercel@latest
 
       - name: Deploy to Vercel
-        run: vercel deploy ${{ github.ref == 'refs/heads/main' && '--prod' || '' }} --yes --token=${{ secrets.VERCEL_TOKEN }}
+        id: deploy
+        run: |
+          url=$(vercel deploy ${{ github.ref == 'refs/heads/main' && '--prod' || '' }} --yes --token=${{ secrets.VERCEL_TOKEN }})
+          echo "url=$url" >> "$GITHUB_OUTPUT"
+          echo "Deployed: $url"
+
+      # Keep a stable URL for dev so the host-only session cookie survives across deploys.
+      - name: Point stable dev alias at this deployment
+        if: github.ref == 'refs/heads/dev'
+        run: vercel alias set "${{ steps.deploy.outputs.url }}" petasight-chat-dev.vercel.app --token=${{ secrets.VERCEL_TOKEN }}

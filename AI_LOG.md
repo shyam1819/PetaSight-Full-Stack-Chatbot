@@ -119,3 +119,7 @@ this file stays scoped to tooling, key prompts, and AI corrections to avoid dupl
 - **2.8 session gating (done).** `getMe`/`logout` client; `App` gates on `/api/me`
   (loading/anon/authed), persists across refresh, 401→login, logout clears state + shows shell with
   email + Log out. Build passes. **Completes EP-2.**
+- **"Refresh logs me out" — diagnosed as deploy-URL churn, not a bug.** Confirmed the cookie/headers
+  are correct and the login→me round-trip works via curl; the cause was a new immutable Preview URL
+  per push (CLI deploys give no branch alias) + host-only cookie. Fixed with a stable alias
+  (`petasight-chat-dev.vercel.app`) re-pointed by the deploy workflow.
