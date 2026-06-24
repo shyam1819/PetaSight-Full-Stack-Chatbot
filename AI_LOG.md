@@ -186,3 +186,7 @@ this file stays scoped to tooling, key prompts, and AI corrections to avoid dupl
 - **5.1 conversation repo (done).** `PostgresConversationRepository` (create / list_by_user / get),
   **every method scoped by user_id**; `get()` ownership-scoped so a non-owner gets None. `Conversation`
   model + unit test. Integration-tested on live Neon incl. isolation (B can't get A's conversation).
+- **5.2 message repo (done).** `PostgresMessageRepository` (add / list_for_conversation), history
+  filtered by `user_id`; persists `bubble_color` + `color_rule` (added the column via idempotent
+  migration to live Neon). `Message` model + unit test; integration-tested incl. message-level
+  isolation (B reads nothing from A's conversation). **Closes 3.6's persist half.**

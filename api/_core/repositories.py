@@ -8,7 +8,7 @@ from __future__ import annotations
 
 from typing import Protocol
 
-from api._core.models import Conversation, User
+from api._core.models import Conversation, Message, User
 
 
 class UserRepository(Protocol):
@@ -22,3 +22,17 @@ class ConversationRepository(Protocol):
     def create(self, user_id: int, title: str | None = None) -> Conversation: ...
     def list_by_user(self, user_id: int) -> list[Conversation]: ...
     def get(self, conversation_id: int, user_id: int) -> Conversation | None: ...
+
+
+class MessageRepository(Protocol):
+    # History reads filter by user_id (defense in depth: messages carry user_id).
+    def add(
+        self,
+        conversation_id: int,
+        user_id: int,
+        role: str,
+        content: str,
+        bubble_color: str | None = None,
+        color_rule: str | None = None,
+    ) -> Message: ...
+    def list_for_conversation(self, conversation_id: int, user_id: int) -> list[Message]: ...

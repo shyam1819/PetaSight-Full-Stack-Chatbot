@@ -66,7 +66,7 @@ Backend
 - ✅ 3.3 [BE] DecimalRule: standalone decimal, first two fractional digits → grayscale/sepia
 - ✅ 3.4 [BE] PanicRule: calm/neutral/panicked → pale yellow/magenta/violet
 - ✅ 3.5 [BE] Resolver (first-match-wins chain) + collision decision (strict first-match-wins; temp needs a unit)
-- 🔄 3.6 [BE] Attach computed color to the reply (ChatService done), persist `bubble_color` → EP-5
+- ✅ 3.6 [BE] Attach computed color to the reply (ChatService) + persist `bubble_color`/`color_rule` (message repo)
 
 UI
 - ⬜ 3.7 [UI] Apply the returned background color to reply bubbles
@@ -84,7 +84,7 @@ Backend
 ### EP-5 — Conversations, History & User Isolation 🔄
 Backend
 - ✅ 5.1 [BE] Conversation repository (create, list by `user_id`)
-- ⬜ 5.2 [BE] Message repository (insert, fetch history) — every query filtered by `user_id`
+- ✅ 5.2 [BE] Message repository (insert, fetch history) — every query filtered by `user_id`
 - ⬜ 5.3 [BE] Chat service: send → persist user msg → color → LLM reply → persist
 - ⬜ 5.4 [BE] Endpoints: list/create conversations, get history, send message (auth-guarded)
 - ⬜ 5.5 [BE] Per-user isolation enforcement: ownership checks, identity from session not client (stretch)

@@ -251,7 +251,7 @@ decisions get appended under their epic as we complete them.
   **shared store** (e.g. Redis/Upstash), which we deliberately excluded (no Redis). Accepted for
   this scope as a known limitation; a production deployment would move to a shared-store limiter.
 - **Persist the colour decision; never recompute on read.** When a message is sent, the computed
-  `bubble_color` (plus provenance: matched rule + the signals) is stored on the assistant message
+  `bubble_color` (plus provenance: the matched `color_rule`) is stored on the assistant message
   row. History loads read the stored colour — **no recomputation, no LLM replay**. Three reasons:
   (1) cost/latency — recomputing every historical message per load is absurd; (2) the `GROQ_API_KEY`
   is revoked after ~1 week (Feature 2), so recomputation would *fail* on old messages — stored
@@ -271,6 +271,14 @@ decisions get appended under their epic as we complete them.
   (`WHERE id = %s AND user_id = %s`), so a non-owner gets `None`. Isolation is the repository's
   default, not an add-on. Verified by an integration test on live Neon: user B cannot get user A's
   conversation.
+- **5.2 Message repository** — `PostgresMessageRepository`: `add(conversation_id, user_id, role,
+  content, bubble_color, color_rule)` and `list_for_conversation(conversation_id, user_id)`.
+  Messages carry `user_id` (denormalized), so history reads **filter on `user_id`** — a user reads
+  no messages even with someone else's `conversation_id` (defense in depth atop the endpoint's
+  ownership check). Persists `bubble_color` + `color_rule` (matched rule as lightweight provenance;
+  raw signals not persisted — not needed to render). Added the `color_rule` column via an idempotent
+  migration applied to live Neon. **Closes 3.6's persist half.** Integration-tested incl.
+  message-level isolation.
 
 ## Phase 5 — Deployment
 

@@ -1,7 +1,7 @@
 """Unit tests for domain models (story 2.3) — no DB needed."""
 from datetime import datetime
 
-from api._core.models import Conversation, User
+from api._core.models import Conversation, Message, User
 
 
 def test_user_from_row():
@@ -30,6 +30,19 @@ def test_conversation_from_row():
     assert convo.user_id == 7
     assert convo.title == "Trip planning"
     assert convo.created_at == created
+
+
+def test_message_from_row():
+    created = datetime(2026, 1, 3, 8, 0, 0)
+    msg = Message.from_row((9, 5, 7, "assistant", "hi there", "#dc1414", "temperature", created))
+    assert msg.id == 9
+    assert msg.conversation_id == 5
+    assert msg.user_id == 7
+    assert msg.role == "assistant"
+    assert msg.content == "hi there"
+    assert msg.bubble_color == "#dc1414"
+    assert msg.color_rule == "temperature"
+    assert msg.created_at == created
 
 
 def _run():

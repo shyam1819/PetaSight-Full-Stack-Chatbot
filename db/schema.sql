@@ -23,8 +23,12 @@ CREATE TABLE IF NOT EXISTS messages (
     role            TEXT NOT NULL CHECK (role IN ('user', 'assistant')),
     content         TEXT NOT NULL,
     bubble_color    TEXT,
+    color_rule      TEXT,
     created_at      TIMESTAMPTZ NOT NULL DEFAULT now()
 );
+
+-- Migration for tables created before color_rule existed (idempotent).
+ALTER TABLE messages ADD COLUMN IF NOT EXISTS color_rule TEXT;
 
 CREATE INDEX IF NOT EXISTS idx_conversations_user ON conversations(user_id);
 CREATE INDEX IF NOT EXISTS idx_messages_conversation ON messages(conversation_id);
