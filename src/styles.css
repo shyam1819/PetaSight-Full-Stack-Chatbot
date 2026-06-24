@@ -158,6 +158,16 @@ body {
   font-weight: 600;
 }
 
+.app__user {
+  margin-left: auto;
+  font-size: 0.85rem;
+  color: #55554f;
+  max-width: 40%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .app__body {
   flex: 1;
   display: flex;
@@ -281,7 +291,6 @@ body {
 }
 
 .composer__send {
-  align-self: flex-end;
   padding: 0.55rem 1rem;
   font-size: 1rem;
   font-weight: 500;
@@ -304,10 +313,14 @@ body {
 
 .composer__error {
   margin: 0;
-  padding: 0.25rem 1.25rem;
-  min-height: 1.1rem;
+  padding: 0 1.25rem;
   font-size: 0.85rem;
   color: #a32d2d;
+}
+
+/* Only takes vertical space when there's actually an error — no gap below the input otherwise. */
+.composer__error:not(:empty) {
+  padding: 0.25rem 1.25rem 0.5rem;
 }
 
 /* Conversation list */

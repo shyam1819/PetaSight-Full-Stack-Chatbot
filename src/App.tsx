@@ -67,6 +67,9 @@ export default function App() {
           ☰
         </button>
         <span className="app__brand">PetaSight Chat</span>
+        <span className="app__user" title={state.user.email}>
+          {state.user.email}
+        </span>
       </header>
 
       <div className="app__body">
@@ -76,9 +79,6 @@ export default function App() {
               <ConversationList selectedId={selectedId} onSelect={setSelectedId} reloadKey={listVersion} />
             </div>
             <div className="sidebar__account">
-              <span className="sidebar__user" title={state.user.email}>
-                {state.user.email}
-              </span>
               <button type="button" className="sidebar__logout" onClick={handleLogout}>
                 Log out
               </button>
