@@ -17,6 +17,10 @@ solution approach is recorded later, in the phase where we decide it.
 - Rule 3 — ask the LLM how urgent/panicked it sounds: violet → magenta → pale yellow.
 - A message can match more than one rule. The ASK **requires a documented decision** on which
   signal wins (not order alone). _Decision pending — to be made when the matcher is built._
+- Assumption: "bubble" = the **AI reply message div** (WhatsApp-style); the user's message sets
+  the color of the assistant's reply bubble.
+- Aesthetics not in the ASK — chat background color, bubble opacity/transparency — are deferred
+  to Phase 4 (code development), constrained by the readability requirement in Feature 3.
 
 ### Feature 2 — Real LLM backend
 - Replies come from a real LLM on the backend, not canned responses.
