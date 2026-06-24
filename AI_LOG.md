@@ -133,3 +133,7 @@ this file stays scoped to tooling, key prompts, and AI corrections to avoid dupl
   `GroqLLMClient` (LangChain `ChatGroq`, `openai/gpt-oss-120b`, `with_structured_output`). LangChain
   isolated in `groq_client.py`. Unit-tested the interface with a fake (no LangChain); added
   `langchain-groq`/`pydantic`. Live `analyze` deferred to 4.2 (needs `GROQ_API_KEY`).
+- **4.2 analyze agent (done).** Verified live on Vercel via a temp probe: "Austin 21.5 we need to
+  leave right now" → city=Austin, temperature_c=21.5, decimal_value="21.5", panic=0.8, sensible
+  reply. The model reported 21.5 as a decimal too (it's the temp) — confirms code must own the
+  resolver (rule 1 first-match-wins ignores it). Probe removed.

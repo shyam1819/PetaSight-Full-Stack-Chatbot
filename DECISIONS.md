@@ -179,6 +179,13 @@ decisions get appended under their epic as we complete them.
   (regex wins on disagreement) and owns the rule precedence + collision decision (EP-3). Colour
   rules remain pure functions fed by signals. Rationale: rule 1 (city) needs world knowledge, but
   rule 2 (decimal) is exact form where regex is strictly safer — so code guards the decimal.
+- **4.3 Rate limiting — LangChain `InMemoryRateLimiter` (per-instance, not global).** Attach an
+  `InMemoryRateLimiter` to `ChatGroq` to pace LLM calls — stay under Groq's limits and bound
+  cost/abuse. **Acknowledged limitation: this is NOT global rate limiting.** The limiter lives in
+  process memory, so in serverless it throttles only **per warm instance**; multiple concurrent
+  Vercel instances can collectively exceed the intended rate. True global throttling would need a
+  **shared store** (e.g. Redis/Upstash), which we deliberately excluded (no Redis). Accepted for
+  this scope as a known limitation; a production deployment would move to a shared-store limiter.
 
 ## Phase 5 — Deployment
 
