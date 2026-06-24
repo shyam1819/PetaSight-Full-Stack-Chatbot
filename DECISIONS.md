@@ -63,6 +63,11 @@ frontend · Neon Postgres store · one repo, same origin. No Redis/cache server.
   not hold). Identity and per-user data live in the store, enforced in the Python functions.
 - **One repo, same origin** — static frontend served at `/`, `api/*.py` at `/api/*`; no CORS, and
   the Python functions are the enforced backend for the `@petasight.com` gate and isolation.
+- **Backend reachability is enforced at the app layer, not the network** — frontend and `/api`
+  share one public origin; the browser calls `/api` directly, so the endpoint is inherently
+  public. "Only reachable through the frontend" = require a server-issued session on every API
+  call (anon/cross-user → 401/403). Vercel Deployment Protection is **disabled** (it blocks the
+  whole deployment incl. the frontend, so it's not a backend-only gate). Feeds [THREATS.md](THREATS.md).
 - **Frontend: Vite + React (TypeScript)**, static SPA in the same project — scaffolded from the
   minimal official Vite starter (not a heavy third-party template, so all code is ours and
   reviewable). React chosen for deliberate **focus control** (`ref` to return focus to the input)

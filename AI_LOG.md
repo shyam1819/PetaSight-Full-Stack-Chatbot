@@ -62,8 +62,14 @@ this file stays scoped to tooling, key prompts, and AI corrections to avoid dupl
   `tsc && vite build`. Caught by running the build and inspecting git status, not trusting the
   scaffold.
 
-## Task 1 — deploy pipeline (in progress)
+## Task 1 — deploy pipeline (done)
 
 - Scaffolded a minimal Vite + React (TS) login page + Python `api/health.py` and `api/login.py`
-  (domain-gated stub, no DB) to prove the deploy + frontend↔`/api` integration. Verified locally:
-  `npm run build` passes and Python compiles. Deployment to Vercel is the user's step.
+  (domain-gated stub, no DB) to prove the deploy + frontend↔`/api` integration.
+- GitHub Actions deploy to Vercel is green (dev → Preview). Verified live on the Preview URL:
+  `/api/health` → 200 `{"status":"ok"}`; `/api/login` → 200 (valid), 403 (wrong domain), 400
+  (missing fields); `/` serves the frontend.
+- **Deployment Protection gotcha:** Vercel Authentication was on by default and returned 401 for
+  the whole deployment (frontend included), not just `/api`. Disabled it so the live URL is public.
+  Backend access control is enforced in app code (auth), not by hiding the endpoint — the API is
+  inherently public once the browser calls it.
