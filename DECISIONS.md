@@ -51,6 +51,9 @@ solution approach is recorded later, in the phase where we decide it.
 
 ## Phase 2 — Architecture (frontend / backend)
 
+**Stack (locked):** Vercel host · Python serverless functions (`api/`) · Vite + React (TypeScript)
+frontend · Neon Postgres store · one repo, same origin. No Redis/cache server.
+
 - **Host: Vercel** — Vercel is not a container platform, so compute is serverless functions, not
   a long-running server.
 - **Backend: Python serverless functions** in `api/` (bare Python handlers; framework optional) —
@@ -60,8 +63,13 @@ solution approach is recorded later, in the phase where we decide it.
   not hold). Identity and per-user data live in the store, enforced in the Python functions.
 - **One repo, same origin** — static frontend served at `/`, `api/*.py` at `/api/*`; no CORS, and
   the Python functions are the enforced backend for the `@petasight.com` gate and isolation.
-- **Frontend: static SPA in the same project** — framework still being chosen (Vite+React vs
-  vanilla); **not** Next.js (its Node backend is redundant against Python `/api`). _Pending._
+- **Frontend: Vite + React (TypeScript)**, static SPA in the same project — scaffolded from the
+  minimal official Vite starter (not a heavy third-party template, so all code is ours and
+  reviewable). React chosen for deliberate **focus control** (`ref` to return focus to the input)
+  and a stable **`aria-live="polite"`** thread, which is the part the brief grades; **not** Next.js
+  (its Node backend is redundant against Python `/api`).
+- **Assessment files stay in `public/`** — Vite's `publicDir` is pointed elsewhere so `public/`
+  (brief + `review/`) is ignored by the build and never deployed to the live URL.
 
 ## Phase 3 — Temporary store
 
@@ -69,6 +77,9 @@ solution approach is recorded later, in the phase where we decide it.
   cleanly, per-user isolation is a simple `WHERE user_id = ...`, scales to zero, and is $0 at this
   scale. Provisioned via the Vercel Marketplace (env vars auto-injected). Required regardless,
   since serverless functions can't keep state in memory.
+- **No Redis / cache server** — kept out to keep the approach simple. Neon is the only store; the
+  color logic is cheap to recompute per request, so caching adds complexity without real benefit
+  here (the starter's in-memory `_CACHE` wouldn't survive serverless invocations anyway).
 
 ## Phase 4 — Code development
 
