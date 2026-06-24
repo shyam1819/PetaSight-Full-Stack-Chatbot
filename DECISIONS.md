@@ -152,7 +152,14 @@ decisions get appended under their epic as we complete them.
   while loading, errors announced via `role="status" aria-live="polite"` (no focus steal),
   `aria-invalid` on failure. Maps backend messages (403 domain / 401 creds / 400 missing / 503 /
   network). Strictly to ASK — no remember-me/social; one helper line for trust-on-first-use. App
-  shows a temporary success placeholder pending 2.8 gating.
+  shows a temporary success placeholder pending 2.8 gating. The on-screen disclosure of the
+  `@petasight.com` requirement and trust-on-first-use is **intentional for the assignment** (makes
+  the behavior obvious to reviewers); a production app would avoid advertising the allowed domain /
+  auto-create behavior to limit user enumeration.
+- **Password policy — none enforced (scope).** No strength/complexity/min-length rules;
+  trust-on-first-use accepts any non-empty password (empty is rejected). Deliberate simplification
+  for the assignment — a production app would enforce a policy (length/complexity, breach check)
+  and rate-limit attempts. Hashing (PBKDF2) still protects stored credentials regardless.
 
 ## Phase 5 — Deployment
 
