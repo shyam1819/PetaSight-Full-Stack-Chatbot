@@ -1,7 +1,7 @@
 """Unit tests for domain models (story 2.3) — no DB needed."""
 from datetime import datetime
 
-from api._core.models import User
+from api._core.models import Conversation, User
 
 
 def test_user_from_row():
@@ -21,6 +21,15 @@ def test_user_is_frozen():
     except Exception:
         raised = True
     assert raised
+
+
+def test_conversation_from_row():
+    created = datetime(2026, 1, 2, 9, 30, 0)
+    convo = Conversation.from_row((5, 7, "Trip planning", created))
+    assert convo.id == 5
+    assert convo.user_id == 7
+    assert convo.title == "Trip planning"
+    assert convo.created_at == created
 
 
 def _run():

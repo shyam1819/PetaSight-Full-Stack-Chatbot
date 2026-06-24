@@ -180,3 +180,9 @@ this file stays scoped to tooling, key prompts, and AI corrections to avoid dupl
 - **3.6 ChatService compute/attach (done).** `build_reply` composes analyze → resolve into
   `AssistantReply(reply, bubble_color, rule, analysis)`; LLMClient-injected, no psycopg/langchain, 3
   fake-LLM tests. DB persist deferred to EP-5 (needs conversation/message repo).
+
+## EP-5 — conversations, history & isolation
+
+- **5.1 conversation repo (done).** `PostgresConversationRepository` (create / list_by_user / get),
+  **every method scoped by user_id**; `get()` ownership-scoped so a non-owner gets None. `Conversation`
+  model + unit test. Integration-tested on live Neon incl. isolation (B can't get A's conversation).

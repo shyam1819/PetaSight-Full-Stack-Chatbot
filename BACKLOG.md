@@ -81,9 +81,9 @@ Backend
 - ✅ 4.3 [BE] Rate limiting on the Groq client via LangChain `InMemoryRateLimiter` (20/min, check 0.1s, burst 20; module-level shared across both ChatGroq; per-instance in serverless — global would need a shared store)
 - ⬜ 4.4 [BE] (Bonus) RTL philosopher persona reply: original script + English translation
 
-### EP-5 — Conversations, History & User Isolation ⬜
+### EP-5 — Conversations, History & User Isolation 🔄
 Backend
-- ⬜ 5.1 [BE] Conversation repository (create, list by `user_id`)
+- ✅ 5.1 [BE] Conversation repository (create, list by `user_id`)
 - ⬜ 5.2 [BE] Message repository (insert, fetch history) — every query filtered by `user_id`
 - ⬜ 5.3 [BE] Chat service: send → persist user msg → color → LLM reply → persist
 - ⬜ 5.4 [BE] Endpoints: list/create conversations, get history, send message (auth-guarded)

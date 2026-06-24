@@ -264,6 +264,14 @@ decisions get appended under their epic as we complete them.
   reproducible; an ordinal classification is reliable, testable, and aligns 1:1 with the brief's
   three named colours. (Temperature stays continuous — it's a real number the user supplies.)
 
+### EP-5 — Conversations, History & User Isolation
+- **5.1 Conversation repository** — `PostgresConversationRepository` (interface in
+  `repositories.py`): `create(user_id, title)`, `list_by_user(user_id)`, `get(conversation_id,
+  user_id)`. **Every method is scoped by `user_id`** — `get()` is ownership-scoped
+  (`WHERE id = %s AND user_id = %s`), so a non-owner gets `None`. Isolation is the repository's
+  default, not an add-on. Verified by an integration test on live Neon: user B cannot get user A's
+  conversation.
+
 ## Phase 5 — Deployment
 
 - **CI/CD via GitHub Actions** (`.github/workflows/deploy.yml`), not Vercel's native Git
