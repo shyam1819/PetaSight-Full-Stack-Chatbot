@@ -56,7 +56,7 @@ Backend
 - ✅ 2.6 [BE] Require-auth guard: server-established `user_id` for protected routes
 
 UI
-- ⬜ 2.7 [UI] Accessible login form wired to `/api/login` (loading + error states)
+- ✅ 2.7 [UI] Accessible login form wired to `/api/login` (loading + error states)
 - ⬜ 2.8 [UI] Session-aware gating (authed→chat, logout control, 401 handling)
 
 ### EP-3 — Bubble Color Engine ⬜

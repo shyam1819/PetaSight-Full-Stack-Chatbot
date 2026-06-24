@@ -113,3 +113,6 @@ this file stays scoped to tooling, key prompts, and AI corrections to avoid dupl
 - **2.6 auth guard (done).** `authenticate()` (pure) + `require_user()` (handler glue);
   `/api/me` refactored onto it. Verified live: me 200 with cookie, 401 without. 5 unit tests, no
   psycopg. Completes EP-2 backend (2.1–2.6); only the login UI (2.7–2.8) remains.
+- **2.7 login form (done).** Accessible `LoginForm` + typed auth client; loading/error states,
+  `aria-live` status, autofocus, visible focus rings, `aria-invalid`. Build passes; wired to the
+  live `/api/login` (verified in 2.5). Session gating + chat come in 2.8.

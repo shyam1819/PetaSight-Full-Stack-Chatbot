@@ -146,6 +146,13 @@ decisions get appended under their epic as we complete them.
   1h is ample; (3) expiry is handled cleanly by the UI's 401 handling (drop to login), so no abrupt
   failure. If long active sessions later prove annoying, add sliding refresh **with an absolute
   max-age cap** (preserve original `iat`) and document the replay tradeoff here + in THREATS.
+- **2.7 Login UI** — accessible `LoginForm` wired to `/api/login` via a typed client
+  (`src/api/auth.ts`, same-origin so the cookie is set automatically). A11y by construction:
+  `label[for]` associations, autofocus the email field, visible focus rings, `disabled`/`aria-busy`
+  while loading, errors announced via `role="status" aria-live="polite"` (no focus steal),
+  `aria-invalid` on failure. Maps backend messages (403 domain / 401 creds / 400 missing / 503 /
+  network). Strictly to ASK — no remember-me/social; one helper line for trust-on-first-use. App
+  shows a temporary success placeholder pending 2.8 gating.
 
 ## Phase 5 — Deployment
 
