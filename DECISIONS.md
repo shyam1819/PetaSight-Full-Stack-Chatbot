@@ -140,6 +140,12 @@ decisions get appended under their epic as we complete them.
   signature, never from client input — consistent enforcement and the single seam EP-5 isolation
   relies on. `/api/me` refactored onto it. 5 unit tests; imports no psycopg. Completes the EP-2
   backend.
+- **Session refresh — deliberately omitted.** No `/api/session/refresh`; the 1h TTL is **absolute**,
+  not sliding. Rationale: (1) preserves the tight replay bound from THREATS T1/T2 — sliding refresh
+  would let an actively-replayed stolen cookie be renewed too; (2) a reviewer's session is short, so
+  1h is ample; (3) expiry is handled cleanly by the UI's 401 handling (drop to login), so no abrupt
+  failure. If long active sessions later prove annoying, add sliding refresh **with an absolute
+  max-age cap** (preserve original `iat`) and document the replay tradeoff here + in THREATS.
 
 ## Phase 5 — Deployment
 
