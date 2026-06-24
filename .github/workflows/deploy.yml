@@ -1,0 +1,53 @@
+name: Deploy to Vercel
+
+# Push to dev  -> Preview deployment (a shareable test URL)
+# Push to main -> Production deployment
+on:
+  push:
+    branches: [main, dev]
+
+env:
+  VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+  VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      # Vercel's Python builder uses uv; install it so it's on PATH for the build.
+      - name: Install uv
+        uses: astral-sh/setup-uv@v6
+
+      # CI gate: fail the deploy if the frontend doesn't type-check / build.
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build (CI check)
+        run: npm run build
+
+      # Sanity-check the Python serverless functions compile.
+      - name: Compile-check Python functions
+        run: python3 -m py_compile api/*.py
+
+      # Deploy. dev -> Preview, main -> Production.
+      - name: Install Vercel CLI
+        run: npm install -g vercel@latest
+
+      - name: Deploy to Vercel
+        id: deploy
+        run: |
+          url=$(vercel deploy ${{ github.ref == 'refs/heads/main' && '--prod' || '' }} --yes --token=${{ secrets.VERCEL_TOKEN }})
+          echo "url=$url" >> "$GITHUB_OUTPUT"
+          echo "Deployed: $url"
+
+      # Keep a stable URL for dev so the host-only session cookie survives across deploys.
+      - name: Point stable dev alias at this deployment
+        if: github.ref == 'refs/heads/dev'
+        run: vercel alias set "${{ steps.deploy.outputs.url }}" petasight-chat-dev.vercel.app --token=${{ secrets.VERCEL_TOKEN }}

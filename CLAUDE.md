@@ -39,6 +39,17 @@ phase in [DECISIONS.md](DECISIONS.md).
 Keep docs simple and short — concise entries over prose. `DECISIONS.md` uses `Decision — Why`
 bullets grouped by phase. Don't pad a doc to look thorough.
 
+## Coding conventions
+
+- Follow **SOLID** and standard **LLD patterns**; keep modules **loosely coupled** (depend on
+  interfaces, thin handlers, swappable LLM/DB behind abstractions).
+- Where tight coupling is genuinely unavoidable (e.g. a serverless/runtime constraint), take the
+  call with the user and record the exception in [DECISIONS.md](DECISIONS.md).
+- Backend layering: handler → service → repository; color rules as a first-match-wins Strategy
+  chain; LLM client behind an interface.
+- Shared backend code lives under `api/_<pkg>/` (e.g. `api/_core/`) and is imported package-style:
+  `from api._core.<module> import <name>` (verified on Vercel). Don't use bare `from _core...`.
+
 ## Project conventions
 
 - Commit/push only when the user asks.
