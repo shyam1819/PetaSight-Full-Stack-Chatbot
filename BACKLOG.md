@@ -78,7 +78,7 @@ decimal and owns the resolver).
 Backend
 - ✅ 4.1 [BE] `LLMClient` interface (stdlib) + `GroqLLMClient` (LangChain `ChatGroq`); deps + `GROQ_API_KEY` env
 - ✅ 4.2 [BE] "analyze" agent — LangGraph fan-out: parallel reply + classify (signals: city, temperature_c, decimal, panic); live-verified
-- ⬜ 4.3 [BE] Rate limiting on the Groq client via LangChain `InMemoryRateLimiter` (paces LLM calls / stays under Groq limits; per-instance in serverless — global would need a shared store)
+- ✅ 4.3 [BE] Rate limiting on the Groq client via LangChain `InMemoryRateLimiter` (20/min, check 0.1s, burst 20; module-level shared across both ChatGroq; per-instance in serverless — global would need a shared store)
 - ⬜ 4.4 [BE] (Bonus) RTL philosopher persona reply: original script + English translation
 
 ### EP-5 — Conversations, History & User Isolation ⬜

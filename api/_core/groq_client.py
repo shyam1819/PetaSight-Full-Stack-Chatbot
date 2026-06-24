@@ -12,6 +12,7 @@ from __future__ import annotations
 import os
 from typing import Literal, TypedDict
 
+from langchain_core.rate_limiters import InMemoryRateLimiter
 from langchain_groq import ChatGroq
 from langgraph.graph import END, START, StateGraph
 from pydantic import BaseModel, Field
@@ -19,6 +20,14 @@ from pydantic import BaseModel, Field
 from api._core.llm import MessageAnalysis
 
 _MODEL = "openai/gpt-oss-120b"
+
+# Module-level so it persists across requests on a warm instance (per-instance only in serverless
+# — see DECISIONS 4.3). Shared by both ChatGroq instances → 20 calls/min is a combined cap.
+_RATE_LIMITER = InMemoryRateLimiter(
+    requests_per_second=20 / 60,   # 20 requests per minute
+    check_every_n_seconds=0.1,     # poll the bucket every 100ms
+    max_bucket_size=20,            # allow a burst of up to 20
+)
 
 REPLY_SYSTEM = "You are PetaSight's chat assistant. Write a concise, helpful reply to the user's message."
 
@@ -59,8 +68,10 @@ class GroqLLMClient:
         key = api_key or os.environ.get("GROQ_API_KEY")
         if key:
             common["api_key"] = key
-        self._chat = ChatGroq(**common, temperature=0.5)
-        self._classifier = ChatGroq(**common, temperature=0.0).with_structured_output(_Signals)
+        self._chat = ChatGroq(**common, temperature=0.5, rate_limiter=_RATE_LIMITER)
+        self._classifier = ChatGroq(
+            **common, temperature=0.0, rate_limiter=_RATE_LIMITER
+        ).with_structured_output(_Signals)
         self._graph = self._build_graph()
 
     def _build_graph(self):

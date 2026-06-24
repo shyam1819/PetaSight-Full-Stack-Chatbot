@@ -186,7 +186,10 @@ decisions get appended under their epic as we complete them.
   knowledge, but rule 2 (decimal) is exact form where regex is strictly safer.
 - **4.3 Rate limiting — LangChain `InMemoryRateLimiter` (per-instance, not global).** Attach an
   `InMemoryRateLimiter` to `ChatGroq` to pace LLM calls — stay under Groq's limits and bound
-  cost/abuse. **Acknowledged limitation: this is NOT global rate limiting.** The limiter lives in
+  cost/abuse. Config: **20 req/min** (`requests_per_second=20/60`), `check_every_n_seconds=0.1`,
+  `max_bucket_size=20` (burst); **one module-level limiter shared by both `ChatGroq` instances**, so
+  20/min is a combined cap that persists across requests on a warm instance.
+  **Acknowledged limitation: this is NOT global rate limiting.** The limiter lives in
   process memory, so in serverless it throttles only **per warm instance**; multiple concurrent
   Vercel instances can collectively exceed the intended rate. True global throttling would need a
   **shared store** (e.g. Redis/Upstash), which we deliberately excluded (no Redis). Accepted for
