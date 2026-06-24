@@ -49,6 +49,27 @@ A chatbot with a **live URL** (Vercel or anywhere) and a **public repo**.
 - [ ] **Sign-in restricted to `@petasight.com`** — and the rule is **enforced at the backend
       endpoint**, not just on the login page.
 
+### 4.1 Accessibility & focus — explicit acceptance criteria
+
+> The brief calls these out as things **they will open the app and check themselves**. Test
+> with the keyboard only (no mouse) and with a screen reader if possible.
+
+**Keyboard operability**
+- [ ] **Tab / Shift+Tab** reaches every interactive element (input, send, sign-in) in a sensible order.
+- [ ] Every focusable element shows a **visible focus ring**.
+- [ ] **Enter** sends from the input; Enter/Space activate buttons.
+- [ ] Nothing is reachable by mouse only (no click-only or hover-only targets).
+
+**Contrast as color shifts**
+- [ ] Text stays readable on **every** bubble background (target WCAG ≥ 4.5:1).
+- [ ] Text color is **derived from each bubble's background luminance** (e.g. black/white pick), not hardcoded.
+
+**Focus management on new bubbles**
+- [ ] After sending, **focus stays in the message input** — never stolen by the incoming reply.
+- [ ] A re-render/append must **not drop focus** to `<body>` or yank the viewport.
+- [ ] New replies are announced via an **ARIA live region** (`aria-live="polite"`) on the thread, so assistive tech reads them **without** moving focus.
+- [ ] Scrolling a new message into view is fine; **moving focus** to it is not.
+
 ## 5. Stretch (optional — fine not to reach)
 
 - [ ] **Per-user chat history isolation.** Messages stored per user. A signed-in user must not
