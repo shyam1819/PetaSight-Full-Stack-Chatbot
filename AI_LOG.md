@@ -204,3 +204,6 @@ this file stays scoped to tooling, key prompts, and AI corrections to avoid dupl
   in-app `/api/db_migrate` endpoint that migrates the app's own branch; confirmed the branch is
   stable across deploys, then removed the endpoint. Lesson: migrate the branch the *app* uses, not
   the one the CLI hands you.
+- **5.5 isolation + THREATS (done).** Enforcement already shipped (5.1–5.4); wrote THREATS T3 — the
+  per-user isolation threat model (IDOR / identity-injection / cookie-forgery → defenses → live +
+  test verification → residual risk). Stretch goal met and proven.

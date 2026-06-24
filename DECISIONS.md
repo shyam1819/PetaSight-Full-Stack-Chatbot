@@ -291,6 +291,10 @@ decisions get appended under their epic as we complete them.
   import so history reads skip the LangChain cold-start. Verified **live end to end** incl. isolation
   (B → 404 on A's data, no-cookie → 401) and correct colours ("Austin 21.5C" → temperature `#ce72a2`,
   "the bill was 42.37" → decimal `#9e9d99`).
+- **5.5 Isolation enforcement + THREATS.** Enforcement was already shipped across 5.1–5.4
+  (`user_id` from the verified cookie only; ownership-scoped queries; messages denormalize `user_id`
+  for defense in depth). Documented as **THREATS T3** — the IDOR / identity-injection / cookie-forgery
+  attacks, the defenses, and the live + test verification. No gaps found; the stretch goal is met.
 
 ## Phase 5 — Deployment
 

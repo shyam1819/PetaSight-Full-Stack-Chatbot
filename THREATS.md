@@ -1,7 +1,8 @@
 # THREATS
 
-Threat model for the PetaSight chatbot. Grows as features land; the deep per-user **isolation**
-analysis arrives with EP-5/EP-7. Format per entry: **attack → defense → residual risk**.
+Threat model for the PetaSight chatbot. Format per entry: **attack → defense → residual risk**.
+T3 is the deepest concern (per-user isolation — the brief's stretch goal), and it is **implemented
+and verified live**, not just modelled.
 
 ## T1 — Session replay after logout (stateless sessions)
 
@@ -45,3 +46,47 @@ replayable until expiry — inherent to stateless bearer sessions. We deliberate
 IP-binding** (breaks mobile/roaming users with false logouts) and a **server-side revocation
 store** (breaks statelessness). If tighter control were needed: shorten the TTL further, or move
 to stateful sessions with revocation.
+
+## T3 — One signed-in user reaching another user's data (per-user isolation)
+
+The deepest concern (the brief's stretch goal): user **A**, holding a *valid* `@petasight.com`
+session of their own, tries to read or modify user **B**'s conversations/messages through the API.
+
+**Attacks considered.**
+1. **IDOR** — A calls `GET /api/messages?conversation_id=<B's id>` or `POST /api/messages` with B's
+   `conversation_id`. IDs are sequential `BIGSERIAL`, so A can enumerate/guess B's.
+2. **Identity injection** — A supplies a `user_id` (body/query/header) to act as B.
+3. **Cookie forgery** — A edits the session cookie to set `sub` = B's id.
+
+**Defenses (shipped).**
+- **Identity is server-established, never client-supplied.** Every handler takes `user_id` only
+  from `require_user()` → the verified cookie's `sub`. No code path reads a user id from the
+  request, so **attack 2 has no surface**. (This is exactly the `review/` module's `X-User-Email`
+  mistake — trusting a client header for identity — which we avoid.)
+- **Ownership-scoped queries.** Every conversation/message query filters by `user_id` in SQL:
+  `WHERE id = %s AND user_id = %s` (conversations), `WHERE conversation_id = %s AND user_id = %s`
+  (messages). So A passing B's `conversation_id` (**attack 1**) matches no rows → `404`;
+  `send_message` returns `None` → `404`. The id is only a lookup key; ownership is always re-checked
+  against the *cookie's* user.
+- **Defense in depth.** Messages carry `user_id` (denormalized), so history reads scope on
+  `user_id` directly — even if the conversation ownership check were ever bypassed, message reads
+  return only the caller's rows.
+- **Cookie integrity.** The session is HMAC-signed with `SESSION_SECRET`; tampering `sub` breaks the
+  signature → `401` (**attack 3** fails). See T1/T2.
+
+**How I convinced myself it holds.**
+- **Live:** as B, `GET` history and `POST` send to A's `conversation_id` both returned **404**; no
+  cookie → **401**; B's own conversation list was empty. As A, the full flow worked.
+- **Integration tests** prove repo-level isolation (B can't `get` A's conversation; B reads no
+  messages from A's conversation).
+- **Unit test** confirms `send_message` rejects an unowned conversation.
+- The only client-controlled identifier is `conversation_id`, and every query that consumes it also
+  constrains `user_id` — so an id A doesn't own yields nothing.
+
+**Residual risk / honest notes.**
+- **Enumeration:** sequential ids let A *guess* B's ids, but guessing is useless — ownership
+  scoping returns `404` regardless, and a non-existent id and a non-owned id both return a **uniform
+  404** (no existence oracle). UUID ids would hide existence further; not needed given the uniform
+  response.
+- Isolation rests on session integrity — a leaked `SESSION_SECRET` would let an attacker forge any
+  `sub`. Mitigated by keeping it server-side (Vercel env only) and the short token TTL (T1/T2).
