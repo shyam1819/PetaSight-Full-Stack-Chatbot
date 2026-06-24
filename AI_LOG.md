@@ -74,11 +74,13 @@ this file stays scoped to tooling, key prompts, and AI corrections to avoid dupl
   Backend access control is enforced in app code (auth), not by hiding the endpoint — the API is
   inherently public once the browser calls it.
 
-## Task 2 — Neon Postgres (in progress)
+## Task 2 — Neon Postgres (done)
 
 - Neon provisioned via the Vercel Marketplace; env vars injected with a `petasight_postgres_`
   prefix. Added `psycopg[binary]`, a self-contained `api/db_health.py` connectivity check, and
   `db/schema.sql` (users/conversations/messages, idempotent).
 - Applied the schema to Neon from a throwaway venv using the unpooled connection (`vercel env
-  pull` → run → deleted the pulled secrets + venv). Verified tables exist: users, conversations,
-  messages. Live deploy verification of `/api/db_health` pending the next push.
+  pull` → run → deleted the pulled secrets + venv).
+- Verified live on the deployed function: `/api/db_health` → 200 `{"db":"ok","via":
+  "petasight_postgres_DATABASE_URL","expected_tables":3}`. psycopg installs fine in the Vercel
+  build; runtime connects via the pooled URL.
