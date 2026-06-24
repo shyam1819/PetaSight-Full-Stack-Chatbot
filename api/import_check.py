@@ -9,9 +9,9 @@ import os
 import sys
 import json
 
-# Strategy A — top-level import (traced + bundled by Vercel).
+# Strategy A — top-level package-style import (the convention we want to lock).
 try:
-    from _core.greeting import hello as _top_hello
+    from api._core.greeting import hello as _top_hello
 
     _TOP = _top_hello()
 except Exception as exc:  # noqa: BLE001
