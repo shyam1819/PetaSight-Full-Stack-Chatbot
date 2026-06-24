@@ -134,6 +134,12 @@ decisions get appended under their epic as we complete them.
   cookie, idempotent), `GET /api/me` (identity from the verified cookie, else 401). Shared
   `http_helpers` for body/JSON; **503 fail-closed** if `SESSION_SECRET` is missing. Replaced the
   Task-1 login stub. Verified live end-to-end on the Preview deploy (8-step round-trip).
+- **2.6 Require-auth guard** — one seam (`auth_guard.py`) turns the session cookie into a
+  server-established identity: `authenticate()` (pure decision) + `require_user()` (handler glue →
+  401 unauth / 503 misconfig). Protected handlers get `user_id` **only** from the verified
+  signature, never from client input — consistent enforcement and the single seam EP-5 isolation
+  relies on. `/api/me` refactored onto it. 5 unit tests; imports no psycopg. Completes the EP-2
+  backend.
 
 ## Phase 5 — Deployment
 

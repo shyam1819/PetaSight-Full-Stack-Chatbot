@@ -110,3 +110,6 @@ this file stays scoped to tooling, key prompts, and AI corrections to avoid dupl
   handlers + `http_helpers`. Verified live on Preview: 201 create → 200 me → 200 re-auth → 401
   wrong-pw → 403 bad-domain → 400 missing → 200 logout → 401 me. `SESSION_SECRET` set in Vercel
   (Preview/Prod).
+- **2.6 auth guard (done).** `authenticate()` (pure) + `require_user()` (handler glue);
+  `/api/me` refactored onto it. Verified live: me 200 with cookie, 401 without. 5 unit tests, no
+  psycopg. Completes EP-2 backend (2.1–2.6); only the login UI (2.7–2.8) remains.

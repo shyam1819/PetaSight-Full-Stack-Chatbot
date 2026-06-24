@@ -53,7 +53,7 @@ Backend
 - ✅ 2.3 [BE] User repository (find / create by email)
 - ✅ 2.4 [BE] Auth service: `@petasight.com` gate + trust-on-first-use + wrong-password rejection
 - ✅ 2.5 [BE] Endpoints: `POST /api/login`, `POST /api/logout`, `GET /api/me`
-- ⬜ 2.6 [BE] Require-auth guard: server-established `user_id` for protected routes
+- ✅ 2.6 [BE] Require-auth guard: server-established `user_id` for protected routes
 
 UI
 - ⬜ 2.7 [UI] Accessible login form wired to `/api/login` (loading + error states)
