@@ -24,6 +24,10 @@ solution approach is recorded later, in the phase where we decide it.
 
 ### Feature 2 — Real LLM backend
 - Replies come from a real LLM on the backend, not canned responses.
+- LLM access is **temporary**: a basic API key/access is provisioned for evaluation and will be
+  revoked ~1 week / 10 days after submission (the ASK allows shutting the project off then).
+  Implication: the key lives in backend env/secrets only, never in the client, and the app may
+  stop replying once it's pulled — that is expected.
 
 ### Feature 3 — Keyboard, readability, focus
 - Works with a keyboard; text stays readable as the background color shifts.
