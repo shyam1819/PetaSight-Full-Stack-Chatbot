@@ -25,6 +25,14 @@ to correct. Kept current as work happens (see [DEFINITION_OF_DONE.md](DEFINITION
 - **Loose color spec.** Initial restatement treated case 1 as a plain blue→red blend and case 2
   as a whole-number map. Corrected: case 1 is a clamped **3-stop** ramp requiring a city *and* a
   temperature; case 2 uses only the **first two fractional digits**.
+- **Documented approach too early.** First Phase 1 write-up recorded our *solution* (the collision
+  call, per-bubble computed text color) in the features section. Corrected to spec-only —
+  features capture what the ASK requires; our approach is recorded in the phase where we decide it.
+
+## Where decisions live
+
+Design/judgment decisions are logged in [DECISIONS.md](DECISIONS.md) by build phase, not here —
+this file stays scoped to tooling, key prompts, and AI corrections to avoid duplicating it.
 
 > No application code has been written yet, so there are no code-level AI mistakes to report.
 > This section will grow as implementation starts.
