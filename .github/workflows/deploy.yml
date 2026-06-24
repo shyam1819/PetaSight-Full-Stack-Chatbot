@@ -21,6 +21,10 @@ jobs:
           node-version: 20
           cache: npm
 
+      # Vercel's Python builder uses uv; install it so it's on PATH for the build.
+      - name: Install uv
+        uses: astral-sh/setup-uv@v6
+
       # CI gate: fail the deploy if the frontend doesn't type-check / build.
       - name: Install dependencies
         run: npm ci
@@ -32,8 +36,7 @@ jobs:
       - name: Compile-check Python functions
         run: python3 -m py_compile api/*.py
 
-      # Deploy. Vercel builds in its own cloud (its Python builder provides `uv`
-      # there), so CI does not need uv / a prebuilt step. dev -> Preview, main -> Production.
+      # Deploy. dev -> Preview, main -> Production.
       - name: Install Vercel CLI
         run: npm install -g vercel@latest
 
