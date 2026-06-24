@@ -122,6 +122,13 @@ decisions get appended under their epic as we complete them.
   (testable with a fake). `create()` raises on duplicate email; the service handles
   trust-on-first-use. Repo verified by an integration check against live Neon (model mapping
   unit-tested separately).
+- **2.4 Auth service** — pure `AuthService` over the `UserRepository` interface; returns an
+  `AuthResult` with an `AuthOutcome` enum (`CREATED` / `AUTHENTICATED` / `INVALID_CREDENTIALS` /
+  `DOMAIN_NOT_ALLOWED` / `MISSING_FIELDS`) that 2.5 maps to HTTP codes. Enforces `@petasight.com`
+  server-side, trust-on-first-use, wrong-password **rejection without overwrite**, and email
+  normalization (strip+lower). Session secret injectable. Interfaces extracted to
+  `repositories.py` (DIP) so the service imports **no psycopg** — verified, and unit-tested with a
+  fake repo (6 tests).
 
 ## Phase 5 — Deployment
 

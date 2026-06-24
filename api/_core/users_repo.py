@@ -1,20 +1,12 @@
 """User data access — the only place that knows SQL for the users table.
 
-The auth service depends on the UserRepository interface (not on psycopg), so it can be
-unit-tested with an in-memory fake.
+Implements the `UserRepository` interface from `repositories.py`. The auth service depends on
+that interface (not on this class), so it can be unit-tested with an in-memory fake.
 """
 from __future__ import annotations
 
-from typing import Protocol
-
 from api._core.db import connect
 from api._core.models import USER_COLUMNS, User
-
-
-class UserRepository(Protocol):
-    def find_by_email(self, email: str) -> User | None: ...
-    def get_by_id(self, user_id: int) -> User | None: ...
-    def create(self, email: str, password_hash: str) -> User: ...
 
 
 class PostgresUserRepository:

@@ -102,3 +102,7 @@ this file stays scoped to tooling, key prompts, and AI corrections to avoid dupl
   `PostgresUserRepository`), frozen `User` model, shared `db.connect()`. Model mapping
   unit-tested; create/find/get/duplicate integration-tested against live Neon (pulled creds in a
   throwaway venv, row cleaned up, secrets deleted after).
+- **2.4 auth service (done).** `AuthService` over the repo interface: domain gate,
+  trust-on-first-use, wrong-password rejection (no overwrite), email normalization; outcome enum
+  for handler mapping. Extracted `UserRepository` to `repositories.py` (DIP) so the service has
+  zero psycopg dependency (verified `psycopg loaded: False`); 6 unit tests with a fake repo.
