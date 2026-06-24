@@ -95,6 +95,9 @@ A chatbot with a **live URL** (Vercel or anywhere) and a **public repo**.
 
 > Note: the `review/` folder is referenced by the brief but **not yet present** in this repo.
 
+> **Process gate:** these deliverables must be kept current as work happens. Every commit and
+> every "done" feature must pass [DEFINITION_OF_DONE.md](DEFINITION_OF_DONE.md) first.
+
 ## 8. How it will be evaluated
 
 Judgment over completion. Specifically:
