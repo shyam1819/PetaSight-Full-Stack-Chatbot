@@ -227,4 +227,7 @@ this file stays scoped to tooling, key prompts, and AI corrections to avoid dupl
 - **UX changes from hands-on testing (done).** New chat is the default (lazy-created on first send,
   title = first message); optimistic user bubble + typing indicator; colour-dominant **gradient**
   bubbles (text still on the colour → contrast preserved); collapsible sidebar; logout at sidebar
-  foot; scroll confined to the message window + sidebar. Build green.
+  foot; scroll confined to the message window + sidebar. Build green. Follow-ups from a second pass:
+  email moved to header top-right; composer error row collapses when empty + Send stretches to the
+  input height; **red, larger Log out button aligned with the input row**, behind an accessible
+  **confirm dialog** (focus moved in, Escape/backdrop to cancel).

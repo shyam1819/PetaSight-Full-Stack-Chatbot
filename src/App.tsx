@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import LoginForm from './components/LoginForm'
 import ConversationList from './components/ConversationList'
 import ChatPanel from './components/ChatPanel'
@@ -16,6 +16,13 @@ export default function App() {
   const [selectedId, setSelectedId] = useState<number | null>(null)
   const [sidebarOpen, setSidebarOpen] = useState(true)
   const [listVersion, setListVersion] = useState(0)
+  const [confirmingLogout, setConfirmingLogout] = useState(false)
+  const cancelRef = useRef<HTMLButtonElement>(null)
+
+  // Move focus into the dialog when it opens (accessibility).
+  useEffect(() => {
+    if (confirmingLogout) cancelRef.current?.focus()
+  }, [confirmingLogout])
 
   useEffect(() => {
     let active = true
@@ -79,7 +86,11 @@ export default function App() {
               <ConversationList selectedId={selectedId} onSelect={setSelectedId} reloadKey={listVersion} />
             </div>
             <div className="sidebar__account">
-              <button type="button" className="sidebar__logout" onClick={handleLogout}>
+              <button
+                type="button"
+                className="sidebar__logout"
+                onClick={() => setConfirmingLogout(true)}
+              >
                 Log out
               </button>
             </div>
@@ -89,6 +100,39 @@ export default function App() {
           <ChatPanel conversationId={selectedId} onConversationCreated={handleConversationCreated} />
         </main>
       </div>
+
+      {confirmingLogout && (
+        <div className="modal" onClick={() => setConfirmingLogout(false)}>
+          <div
+            className="modal__box"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="logout-title"
+            onClick={(e) => e.stopPropagation()}
+            onKeyDown={(e) => {
+              if (e.key === 'Escape') setConfirmingLogout(false)
+            }}
+          >
+            <h2 id="logout-title" className="modal__title">
+              Log out?
+            </h2>
+            <p className="modal__text">Are you sure you want to log out?</p>
+            <div className="modal__actions">
+              <button
+                type="button"
+                className="modal__cancel"
+                ref={cancelRef}
+                onClick={() => setConfirmingLogout(false)}
+              >
+                Cancel
+              </button>
+              <button type="button" className="modal__confirm" onClick={handleLogout}>
+                Log out
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

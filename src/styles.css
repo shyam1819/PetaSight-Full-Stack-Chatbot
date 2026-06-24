@@ -191,10 +191,10 @@ body {
 
 .sidebar__account {
   border-top: 1px solid #e3e3e0;
-  padding: 0.6rem 0.75rem;
+  /* Match the composer's vertical padding so the Log out row lines up with the input row. */
+  padding: 0.75rem;
   display: flex;
   flex-direction: column;
-  gap: 0.4rem;
 }
 
 .sidebar__user {
@@ -206,18 +206,19 @@ body {
 }
 
 .sidebar__logout {
-  padding: 0.4rem 0.6rem;
-  font-size: 0.875rem;
-  font-weight: 500;
-  color: #1a1a1a;
-  background: #fff;
-  border: 1px solid #c4c4be;
-  border-radius: 8px;
+  width: 100%;
+  padding: 0.7rem 0.8rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #ffffff;
+  background: #c0392b;
+  border: none;
+  border-radius: 10px;
   cursor: pointer;
 }
 
 .sidebar__logout:hover {
-  background: #f4f5f7;
+  background: #a93226;
 }
 
 .sidebar__logout:focus-visible {
@@ -460,4 +461,77 @@ body {
   40% {
     opacity: 1;
   }
+}
+
+/* Logout confirmation dialog */
+.modal {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  background: rgba(0, 0, 0, 0.4);
+}
+
+.modal__box {
+  width: 100%;
+  max-width: 22rem;
+  background: #ffffff;
+  border-radius: 14px;
+  padding: 1.5rem;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.22);
+}
+
+.modal__title {
+  margin: 0 0 0.5rem;
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.modal__text {
+  margin: 0 0 1.25rem;
+  color: #55554f;
+}
+
+.modal__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+
+.modal__cancel,
+.modal__confirm {
+  padding: 0.5rem 1rem;
+  font-size: 0.95rem;
+  font-weight: 500;
+  border-radius: 9px;
+  cursor: pointer;
+}
+
+.modal__cancel {
+  color: #1a1a1a;
+  background: #fff;
+  border: 1px solid #c4c4be;
+}
+
+.modal__cancel:hover {
+  background: #f4f5f7;
+}
+
+.modal__confirm {
+  color: #ffffff;
+  background: #c0392b;
+  border: none;
+}
+
+.modal__confirm:hover {
+  background: #a93226;
+}
+
+.modal__cancel:focus-visible,
+.modal__confirm:focus-visible {
+  outline: 2px solid #3a5bd9;
+  outline-offset: 2px;
 }
