@@ -11,9 +11,12 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 from api._core.bubble_rules import resolve_bubble_color
-from api._core.llm import LLMClient, MessageAnalysis
+from api._core.llm import History, LLMClient, MessageAnalysis
 from api._core.models import Message
 from api._core.repositories import ConversationRepository, MessageRepository
+
+# Cap the conversation context handed to the LLM (last N messages) to bound tokens/rate.
+MAX_HISTORY_MESSAGES = 20
 
 
 @dataclass(frozen=True)
@@ -41,9 +44,9 @@ class ChatService:
         self._conversations = conversations
         self._messages = messages
 
-    def build_reply(self, user_message: str) -> AssistantReply:
-        """One LLM round-trip → reply + signals; the resolver decides the bubble colour."""
-        analysis = self._llm.analyze(user_message)
+    def build_reply(self, user_message: str, history: History | None = None) -> AssistantReply:
+        """One LLM round-trip → reply (history-aware) + signals (per-message); resolver picks colour."""
+        analysis = self._llm.analyze(user_message, history)
         bubble = resolve_bubble_color(user_message, analysis)
         return AssistantReply(
             reply=analysis.reply,
@@ -57,8 +60,12 @@ class ChatService:
         if self._conversations.get(conversation_id, user_id) is None:
             return None  # not found / not owned — never leak another user's conversation
 
+        # Pull THIS conversation's prior turns (server-side, user-scoped) as reply context.
+        prior = self._messages.list_for_conversation(conversation_id, user_id)
+        history: History = [(m.role, m.content) for m in prior][-MAX_HISTORY_MESSAGES:]
+
         # Compute first: if the LLM call fails, nothing is written (no dangling half-turn).
-        reply = self.build_reply(text)
+        reply = self.build_reply(text, history)
         user_message = self._messages.add(conversation_id, user_id, "user", text)
         assistant_message = self._messages.add(
             conversation_id,

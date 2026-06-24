@@ -10,8 +10,10 @@ from api._core.models import Message
 class FakeLLM:
     def __init__(self, analysis: MessageAnalysis):
         self._analysis = analysis
+        self.last_history = None
 
-    def analyze(self, message: str) -> MessageAnalysis:
+    def analyze(self, message, history=None) -> MessageAnalysis:
+        self.last_history = history
         return self._analysis
 
 
@@ -92,6 +94,18 @@ def test_send_message_assistant_has_colour_and_rule():
 def test_send_message_rejects_unowned_conversation():
     svc = _svc(_analysis(), owned=set())  # conversation (1,7) not owned
     assert svc.send_message(1, 7, "hello") is None
+
+
+def test_send_message_passes_prior_history_to_llm():
+    llm = FakeLLM(_analysis(reply="ok"))
+    convos = FakeConversationRepo({(1, 7)})
+    msgs = FakeMessageRepo()
+    msgs.add(1, 7, "user", "earlier question")
+    msgs.add(1, 7, "assistant", "earlier answer", "#fff", "panic")
+    ChatService(llm, convos, msgs).send_message(1, 7, "new question")
+    assert llm.last_history == [("user", "earlier question"), ("assistant", "earlier answer")]
+    # the current message must NOT be in the history passed to the LLM
+    assert ("user", "new question") not in (llm.last_history or [])
 
 
 def _run():

@@ -61,6 +61,7 @@ class _Signals(BaseModel):
 
 class _State(TypedDict):
     message: str
+    history: list  # prior (role, content) turns — reply context only
     reply: str
     signals: _Signals
 
@@ -79,10 +80,15 @@ class GroqLLMClient:
 
     def _build_graph(self):
         def reply_node(state: _State) -> dict:
-            msg = self._model.invoke([("system", REPLY_SYSTEM), ("human", state["message"])])
-            return {"reply": msg.content}
+            # Reply uses the conversation history for context.
+            msgs: list = [("system", REPLY_SYSTEM)]
+            for role, content in state.get("history") or []:
+                msgs.append(("ai" if role == "assistant" else "human", content))
+            msgs.append(("human", state["message"]))
+            return {"reply": self._model.invoke(msgs).content}
 
         def classify_node(state: _State) -> dict:
+            # Classification (colour) is per-message — deliberately ignores history.
             signals = self._classifier.invoke(
                 [("system", CLASSIFY_SYSTEM), ("human", state["message"])]
             )
@@ -98,8 +104,8 @@ class GroqLLMClient:
         builder.add_edge("classify", END)
         return builder.compile()
 
-    def analyze(self, message: str) -> MessageAnalysis:
-        final = self._graph.invoke({"message": message})
+    def analyze(self, message: str, history: list | None = None) -> MessageAnalysis:
+        final = self._graph.invoke({"message": message, "history": history or []})
         signals: _Signals = final["signals"]
         return MessageAnalysis(
             reply=final["reply"],

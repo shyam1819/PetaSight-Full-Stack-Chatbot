@@ -27,5 +27,9 @@ class MessageAnalysis:
     panic: PanicLevel
 
 
+# Prior turns as (role, content) pairs, role in {"user", "assistant"} — used for the REPLY only.
+History = list[tuple[str, str]]
+
+
 class LLMClient(Protocol):
-    def analyze(self, message: str) -> MessageAnalysis: ...
+    def analyze(self, message: str, history: History | None = None) -> MessageAnalysis: ...
