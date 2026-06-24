@@ -19,6 +19,8 @@ solution approach is recorded later, in the phase where we decide it.
   signal wins (not order alone). _Decision pending — to be made when the matcher is built._
 - Assumption: "bubble" = the **AI reply message div** (WhatsApp-style); the user's message sets
   the color of the assistant's reply bubble.
+- Assumption: bubble color is decided **per message in isolation** — conversation history does
+  not influence it; only the single user message that triggered the reply is evaluated.
 - Aesthetics not in the ASK — chat background color, bubble opacity/transparency — are deferred
   to Phase 4 (code development), constrained by the readability requirement in Feature 3.
 
