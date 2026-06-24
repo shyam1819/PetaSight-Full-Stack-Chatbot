@@ -142,3 +142,8 @@ this file stays scoped to tooling, key prompts, and AI corrections to avoid dupl
   the brief's 3 colours). Constrained `Literal` in the structured schema. Verified live across
   samples: "leave right now"→panicked, "all good here"→calm, "total came to 42.37"→neutral (decimal
   42.37 also extracted). Probe removed.
+- **Two parallel calls via LangGraph (user decision).** Reworked `analyze()` into a LangGraph
+  fan-out: `reply` + `classify` nodes branch from START, run concurrently, then join (interface
+  unchanged). Verified live: **parallel 0.7s vs sequential 1.75s (~2.5×)**, correct signals.
+  Tradeoff: 2× LLM calls + `langgraph` dep. Also decided: **persist `bubble_color` + provenance**;
+  history reads stored (never recompute / replay the LLM — also survives key revocation).
