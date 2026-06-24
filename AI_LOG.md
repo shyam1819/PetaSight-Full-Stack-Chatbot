@@ -10,12 +10,31 @@ to correct. Kept current as work happens (see [DEFINITION_OF_DONE.md](DEFINITION
 
 ## Prompts that mattered
 
+Approach: **lock the target features first, then lock the development phases** — decide *what* the
+ASK requires before deciding *how* to build it, recording each in [DECISIONS.md](DECISIONS.md).
+
+Setup
 - "Describe the ASK and document it in a proper format" → produced [ASK.md](ASK.md) from
   `public/brief.pdf`.
 - "Make a mandatory prerequisite list before any commits / feature completion" → produced
   [DEFINITION_OF_DONE.md](DEFINITION_OF_DONE.md), the deliverable-update gate.
-- "Understand the bubble colour and its readability" → drove a contrast check across all three
-  ramps and the feature wording in [DECISIONS.md](DECISIONS.md) Phase 1.
+- "Follow a series of steps / template … decisions per step" → set the 5 build phases in
+  [CLAUDE.md](CLAUDE.md) and structured DECISIONS by phase.
+
+Stage 1 — lock the target features (Phase 1)
+- "Document by feature wise, we have 4 concrete asks" → DECISIONS Phase 1 captures the 4 asks as
+  the ASK specifies, spec-only (no approach).
+- "Understand the bubble colour and its readability" → contrast check across all three ramps and
+  the Feature 1 wording.
+- Feature scoping prompts → recorded assumptions: bubble = AI reply div, per-message (no history),
+  temporary LLM key, domain-only trust-on-first-use auth, no forgot-password.
+
+Stage 2 — lock the development phases (Phase 2–3)
+- "Can Vercel deploy containers / Python serverless / what frontend?" → established Vercel is
+  serverless-only; locked **Python functions in `api/`** + **Vite + React (TS)** frontend, one
+  repo same-origin, **not** Next.js.
+- "Lock Python serverless backend and Neon Postgres" + "no Redis, keep it simple" → locked the
+  full stack and the store in DECISIONS Phase 2–3.
 
 ## Places the AI got it wrong (corrected)
 
