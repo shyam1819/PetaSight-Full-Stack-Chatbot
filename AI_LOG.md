@@ -137,3 +137,8 @@ this file stays scoped to tooling, key prompts, and AI corrections to avoid dupl
   leave right now" → city=Austin, temperature_c=21.5, decimal_value="21.5", panic=0.8, sensible
   reply. The model reported 21.5 as a decimal too (it's the temp) — confirms code must own the
   resolver (rule 1 first-match-wins ignores it). Probe removed.
+- **Panic = 3-level ordinal enum (decision + verified).** Chose `{calm, neutral, panicked}` over a
+  0–1 float (subjective judgment → false precision; ordinal is reliable/testable and maps 1:1 to
+  the brief's 3 colours). Constrained `Literal` in the structured schema. Verified live across
+  samples: "leave right now"→panicked, "all good here"→calm, "total came to 42.37"→neutral (decimal
+  42.37 also extracted). Probe removed.
