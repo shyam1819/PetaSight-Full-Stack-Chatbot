@@ -231,3 +231,15 @@ this file stays scoped to tooling, key prompts, and AI corrections to avoid dupl
   email moved to header top-right; composer error row collapses when empty + Send stretches to the
   input height; **red, larger Log out button aligned with the input row**, behind an accessible
   **confirm dialog** (focus moved in, Escape/backdrop to cancel).
+
+## EP-7 — threat model & code review (deliverables)
+
+- **7.2 REVIEW.md (done).** Reviewed `public/review/bubble_service.py` + its test. Findings:
+  **R1** `is_petasight_user` trusts the client-supplied `X-User-Email` header → auth bypass (the
+  identity-from-client trap); **R2** `key = int(celsius)` collapses `21.4`/`21.6` and returns the
+  wrong colour — the opposite of the docstring; **R3** the cache shouldn't exist (pure cheap fn;
+  unbounded map; useless in serverless) → call `temp_to_rgb` directly; **R4** the "thread-safe"
+  comment is false (no lock); **R5** the tests pass but assert nothing about the risky paths
+  (`test_cache_runs_twice` → `assert True`). Noted `temp_to_rgb` itself is correct.
+- **7.3 hardening (done).** No app-side isolation gaps (T3 verified live); the temporary
+  probe/migrate endpoints were removed after use. **EP-7 complete — all graded deliverables done.**

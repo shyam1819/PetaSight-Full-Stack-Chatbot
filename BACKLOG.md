@@ -12,10 +12,10 @@ Status legend: ✅ done · 🔄 in progress · ⬜ todo
 | EP-1 | Deployment & Infrastructure | Enabling (live URL, CI/CD, DB) | ✅ done |
 | EP-2 | Authentication & Access Control | Feature 4 (@petasight.com, stateless identity) | ✅ done |
 | EP-3 | Bubble Color Engine | Feature 1 (3 rules, collision, readability) | ✅ done |
-| EP-4 | LLM Backend Integration | Feature 2 (real LLM, panic classification) | ⬜ todo |
+| EP-4 | LLM Backend Integration | Feature 2 (real LLM, panic classification) | ✅ done (4.4 bonus optional) |
 | EP-5 | Conversations, History & User Isolation | Messaging + stretch (per-user data) | ✅ done |
 | EP-6 | Frontend Experience & Accessibility | Feature 3 (login + chat UI, keyboard, focus) | ✅ done |
-| EP-7 | Security Threat Model & Code Review | Deliverables (THREATS.md, REVIEW.md) | ⬜ todo |
+| EP-7 | Security Threat Model & Code Review | Deliverables (THREATS.md, REVIEW.md) | ✅ done |
 
 ## Epic goals
 
@@ -71,7 +71,7 @@ Backend
 UI
 - ✅ 3.7 [UI] Apply the returned background color to reply bubbles (in 5.7)
 
-### EP-4 — LLM Backend Integration 🔄
+### EP-4 — LLM Backend Integration ✅ (4.4 bonus optional)
 Decision: Groq + `openai/gpt-oss-120b` via LangChain `ChatGroq`, behind the `LLMClient` interface.
 One structured "analyze" call returns reply + all 3 signals (LLM classifies; code validates the
 decimal and owns the resolver).
@@ -104,7 +104,7 @@ UI
 - ✅ 6.6 [UI] Per-bubble readable text contrast (luminance-based; bubbles are opaque so no compositing needed)
 - ✅ 6.7 [UI] Aesthetics: clean flat design; bubbles opaque (no opacity), so contrast is direct
 
-### EP-7 — Security Threat Model & Code Review ⬜
+### EP-7 — Security Threat Model & Code Review ✅
 - ✅ 7.1 [Docs] THREATS.md — isolation attack/defense and why it holds (T1/T2/T3)
-- ⬜ 7.2 [Docs] REVIEW.md — review the provided `review/` module (bugs + fixes)
-- ⬜ 7.3 [BE] Harden/lock any isolation or exposed-endpoint gaps found
+- ✅ 7.2 [Docs] REVIEW.md — review the provided `review/` module (bugs + fixes)
+- ✅ 7.3 [BE] Harden/lock gaps — no app gaps found (isolation verified); temp probe/migrate endpoints removed
